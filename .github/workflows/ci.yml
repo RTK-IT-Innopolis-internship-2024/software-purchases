@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 jobs:
+  install_job:
+    env:
+      UV_CACHE_DIR: /tmp/.uv-cache
   uv-example-multiplatform:
     name: python-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -14,7 +17,6 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
       - name: Restore uv cache
         uses: actions/cache@v4
         with:
@@ -25,6 +27,7 @@ jobs:
             uv-${{ runner.os }}
       - name: Minimize uv cache
         run: uv cache prune --ci
+      - uses: actions/checkout@v4
       - name: Set up uv
         if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest' }}
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
