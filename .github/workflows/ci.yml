@@ -38,7 +38,7 @@ jobs:
       - name: Install project dependencies
         run: uv venv --python 3.11
       - name: Check dependencies
-        run: uv pip list
+        run: uv run pip list
       - name: Run ruff linter
         run: uv run ruff check .
       - name: Run yamlfix
