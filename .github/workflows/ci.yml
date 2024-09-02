@@ -45,7 +45,7 @@ jobs:
         run: uv run yamlfix .
       - name: Run pytype static analysis
         if: ${{ matrix.os != 'windows-latest' }}
-        run: uv run --python 3.11 pytype .
+        run: uv run pytype . || (echo "Pytype failed with code $?"; exit 1)
       - name: Build application with PyInstaller
         run: uv run pyinstaller main.py --onefile --name MyApp --distpath dist/${{ matrix.os }}
       - name: Upload artifacts
