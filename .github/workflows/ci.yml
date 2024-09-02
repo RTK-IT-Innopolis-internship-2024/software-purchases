@@ -36,7 +36,7 @@ jobs:
       - name: Set up Python
         run: uv python install
       - name: Install project dependencies
-        run: uv sync --all
+        run: uv venv
       - name: Run ruff linter
         run: uv run ruff .
       - name: Run yamlfix
