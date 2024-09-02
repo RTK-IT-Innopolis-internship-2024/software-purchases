@@ -38,7 +38,7 @@ jobs:
       - name: Install project dependencies
         run: uv venv
       - name: Run ruff linter
-        run: uv run ruff .
+        run: uv run ruff check .
       - name: Run yamlfix
         run: uv run yamlfix .
       - name: Run pytype static analysis
