@@ -34,14 +34,15 @@ jobs:
       - name: Minimize uv cache
         run: uv cache prune --ci
       - name: Set up Python
-        run: uv python install
+        run: uv python install 3.11 3.12
       - name: Install project dependencies
-        run: uv venv
+        run: uv venv --python 3.11
       - name: Run ruff linter
         run: uv run ruff check .
       - name: Run yamlfix
         run: uv run yamlfix .
       - name: Run pytype static analysis
+        if: ${{ matrix.os != 'windows-latest' }}
         run: uv run pytype .
       - name: Build application with PyInstaller
         run: pyinstaller main.py --onefile --name MyApp --distpath dist/${{ matrix.os }}
