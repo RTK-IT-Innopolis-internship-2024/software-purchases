@@ -36,7 +36,7 @@ jobs:
       - name: Set up Python
         run: uv python install 3.11 3.12
       - name: Install project dependencies
-        run: uv venv --python 3.12
+        run: uv venv --python 3.11
       - name: Check dependencies
         run: uv run pip list
       - name: Run ruff linter
