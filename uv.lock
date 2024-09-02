@@ -582,13 +582,13 @@ dependencies = [
     { name = "pyqt5" },
     { name = "pyqt5-qt5" },
     { name = "pyqt5-sip" },
-    { name = "pytype" },
     { name = "setuptools" },
     { name = "wheel" },
 ]
 
 [package.dev-dependencies]
 dev = [
+    { name = "pytype", marker = "platform_system != 'Windows'" },
     { name = "ruff" },
     { name = "yamlfix" },
 ]
@@ -599,16 +599,16 @@ requires-dist = [
     { name = "pre-commit", specifier = ">=3.8.0" },
     { name = "pybind11", specifier = ">=2.13.5" },
     { name = "pyinstaller", specifier = ">=6.10.0" },
-    { name = "pyqt5", specifier = "==5.15.11" },
-    { name = "pyqt5-qt5", specifier = "==5.15.2" },
-    { name = "pyqt5-sip", specifier = "==12.15.0" },
-    { name = "pytype", specifier = ">=2024.4.11" },
+    { name = "pyqt5", specifier = ">=5.15.11" },
+    { name = "pyqt5-qt5", specifier = ">=5.15.2" },
+    { name = "pyqt5-sip", specifier = ">=12.15.0" },
     { name = "setuptools", specifier = ">=74.0.0" },
     { name = "wheel", specifier = ">=0.44.0" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "pytype", marker = "platform_system != 'Windows'", specifier = ">=2024.4.11" },
     { name = "ruff", specifier = ">=0.6.3" },
     { name = "yamlfix", specifier = ">=1.17.0" },
 ]
