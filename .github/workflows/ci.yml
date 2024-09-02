@@ -34,7 +34,7 @@ jobs:
       - name: Minimize uv cache
         run: uv cache prune --ci
       - name: Set up Python
-        run: uv python install 3.11 3.12
+        run: uv python install 3.11
       - name: Install project dependencies
         run: uv venv --python 3.11
       - name: Run ruff linter
