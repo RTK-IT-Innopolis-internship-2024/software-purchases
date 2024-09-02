@@ -38,14 +38,14 @@ jobs:
       - name: Minimize uv cache
         run: uv cache prune --ci
       - name: Run ruff linter
-        run: uv run --python 3.11 ruff check .
+        run: uv run ruff check .
       - name: Run yamlfix
         run: uv run yamlfix .
       - name: Run pytype static analysis
         if: ${{ matrix.os != 'windows-latest' }}
         run: uv run --python 3.11 pytype .
       - name: Build application with PyInstaller
-        run: pyinstaller main.py --onefile --name MyApp --distpath dist/${{ matrix.os }}
+        run: uv run pyinstaller main.py --onefile --name MyApp --distpath dist/${{ matrix.os }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
