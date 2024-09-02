@@ -38,7 +38,7 @@ jobs:
       - name: Minimize uv cache
         run: uv cache prune --ci
       - name: Run ruff linter
-        run: uv run ruff check .
+        run: uv run --python 3.11 ruff check .
       - name: Run yamlfix
         run: uv run yamlfix .
       - name: Run pytype static analysis
