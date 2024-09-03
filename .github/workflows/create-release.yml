@@ -1,5 +1,5 @@
 ---
-name: Manual Release
+name: Create Release
 on:
   workflow_dispatch:
     inputs:
@@ -28,7 +28,7 @@ jobs:
           draft: false
           prerelease: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Linux artifact
         uses: actions/upload-release-asset@v1
         with:
@@ -37,7 +37,7 @@ jobs:
           asset_name: БФТ-Закупки-linux(ubuntu)
           asset_content_type: application/octet-stream
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Upload macOS artifact
         uses: actions/upload-release-asset@v1
         with:
@@ -46,7 +46,7 @@ jobs:
           asset_name: БФТ-Закупки-macOS
           asset_content_type: application/octet-stream
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Windows artifact
         uses: actions/upload-release-asset@v1
         with:
@@ -55,4 +55,4 @@ jobs:
           asset_name: БФТ-Закупки-Windows
           asset_content_type: application/octet-stream
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
