@@ -52,5 +52,5 @@ jobs:
         with:
           name: MyApp-${{ matrix.os }}
           path: dist/${{ matrix.os }}/MyApp*
-      - name: Minimize uv cache
-        run: uv cache prune --ci
+#      - name: Minimize uv cache
+#        run: uv cache prune --ci
