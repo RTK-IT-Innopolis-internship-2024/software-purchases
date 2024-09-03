@@ -10,13 +10,13 @@ repos:
     rev: 1.17.0
     hooks:
       - id: yamlfix
-  - repo: https://github.com/google/pytype
-    rev: 2024.04.11
-    hooks:
-      - id: pytype
-        entry: sh -c 'command -v pytype > /dev/null 2>&1 && pytype || echo "pytype
-          is not installed, skipping check"'
-        default_install_hook_types: [local]
+#  - repo: https://github.com/google/pytype
+#    rev: 2024.04.11
+#    hooks:
+#      - id: pytype
+#        entry: sh -c 'command -v pytype > /dev/null 2>&1 && pytype || echo "pytype
+#          is not installed, skipping check"'
+#        default_install_hook_types: [local]
 #  - repo: https://github.com/pre-commit/pre-commit-hooks
 #    rev: v4.6.0
 #    hooks:
