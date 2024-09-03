@@ -15,6 +15,7 @@ repos:
     hooks:
       - id: mypy
         args: [--config-file=mypy.ini]
+        # test
 #        additional_dependencies: [pyqt6>=6.7.1]
 #  - repo: https://github.com/google/pytype
 #    rev: 2024.04.11
