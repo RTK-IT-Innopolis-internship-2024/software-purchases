@@ -10,6 +10,11 @@ repos:
     rev: 1.17.0
     hooks:
       - id: yamlfix
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        additional_dependencies: [pyqt6>=6.7.1]
 #  - repo: https://github.com/google/pytype
 #    rev: 2024.04.11
 #    hooks:

@@ -41,6 +41,8 @@ jobs:
         run: uv run ruff check .
       - name: Run yamlfix
         run: uv run yamlfix .
+      - name: Run mypy type checking
+        run: uv run mypy .
 #      - name: Run pytype static analysis
 #        if: ${{ matrix.os != 'windows-latest' }}
 #        run: uv run pytype --config pytype.cfg . || (echo "Pytype failed with code
