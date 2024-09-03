@@ -6,10 +6,9 @@ on:
   pull_request:
     branches: [main]
 jobs:
-  install_job:
+  uv-multiplatform-building:
     env:
       UV_CACHE_DIR: /tmp/.uv-cache
-  uv-example-multiplatform:
     name: python-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
