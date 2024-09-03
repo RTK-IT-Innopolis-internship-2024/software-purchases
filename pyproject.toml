@@ -22,5 +22,5 @@ line-length = 88
 dev-dependencies = [
     "ruff>=0.6.3",
     "yamlfix>=1.17.0",
-    "pytype>=2024.04.11; platform_system != 'Windows'",
+    "mypy>=1.11.2",
 ]
