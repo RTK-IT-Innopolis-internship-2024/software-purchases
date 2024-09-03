@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [main]
 jobs:
-  uv-multiplatform-building:
+  multiplatform-building:
     env:
       UV_CACHE_DIR: /tmp/.uv-cache
     name: python-${{ matrix.os }}
