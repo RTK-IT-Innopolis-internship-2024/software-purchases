@@ -11,5 +11,5 @@
 
 ## Some code:
 ```
-pyi-makespec main.py --onefile --name MyApp
+pyi-makespec main.py --onefile --name БФТ-Закупки
 ```
