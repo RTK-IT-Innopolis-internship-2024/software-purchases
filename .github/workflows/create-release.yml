@@ -18,6 +18,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Download Linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: БФТ-Закупки-ubuntu-latest
+          path: dist/linux
+      - name: Download macOS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: БФТ-Закупки-macos-latest
+          path: dist/macos
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: БФТ-Закупки-windows-latest
+          path: dist/windows
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
