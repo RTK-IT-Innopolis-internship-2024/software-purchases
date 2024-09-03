@@ -50,7 +50,7 @@ jobs:
       - name: Build application with PyInstaller
         run: uv run pyinstaller main.py --onefile --name MyApp --distpath dist/${{ matrix.os }}
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: MyApp-${{ matrix.os }}
           path: dist/${{ matrix.os }}/MyApp*
