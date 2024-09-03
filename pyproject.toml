@@ -9,11 +9,10 @@ dependencies = [
     "pre-commit>=3.8.0",
     "pybind11>=2.13.5",
     "pyinstaller>=6.10.0",
-    "pyqt5-qt5>=5.15.14,<5.15.2",
-    "pyqt5-sip>=12.15.0,<12.7.0",
-    "pyqt5>=5.15.11",
+    "pyqt5-qt5>=5.15.2,<=5.15.14",
+    "pyqt5-sip>=12.7.0,<=12.15.0",
+    "pyqt5>=5.15.2,<=5.15.11",
     "setuptools>=74.0.0",
-    "types-pyqt5",
     "wheel>=0.44.0",
 ]
 [tool.ruff]
