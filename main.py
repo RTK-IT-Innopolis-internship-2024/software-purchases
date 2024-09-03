@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         label = QLabel("OwO")
         self.setMinimumSize(500, 500)
