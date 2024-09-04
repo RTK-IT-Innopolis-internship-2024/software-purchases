@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
     steps:
       - name: List all files in dist directory
-        run: find dist/${{ matrix.os }} -type f -print
+        run: find dist/ -type f -print
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
