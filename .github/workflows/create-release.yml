@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/linux/Apps-Purchases.zip
+          asset_path: ./dist/linux-latest/Apps-Purchases.zip
           asset_name: Apps-Purchases-linux(ubuntu)
           asset_content_type: application/octet-stream
         env:
@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/macos/Apps-Purchases.zip
+          asset_path: ./dist/macos-latest/Apps-Purchases.zip
           asset_name: Apps-Purchases-macOS
           asset_content_type: application/octet-stream
         env:
@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/windows/Apps-Purchases.zip
+          asset_path: ./dist/windows-latest/Apps-Purchases.zip
           asset_name: Apps-Purchases-Windows
           asset_content_type: application/octet-stream
         env:
