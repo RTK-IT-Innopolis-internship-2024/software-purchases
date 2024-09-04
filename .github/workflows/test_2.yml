@@ -1,5 +1,5 @@
 ---
-name: Download Specific Artifacts with GitHub CLI
+name: Test Download Specific Artifacts with CLI
 on:
   workflow_dispatch:
 jobs:

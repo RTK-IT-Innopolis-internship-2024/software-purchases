@@ -1,5 +1,5 @@
 ---
-name: Download Specific Artifacts
+name: Test Download Specific Artifacts with actions/download-artifact@v4
 on:
   workflow_dispatch:
 jobs:
