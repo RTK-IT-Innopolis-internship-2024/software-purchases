@@ -51,7 +51,5 @@ jobs:
         with:
           name: Apps-Purchases-${{ matrix.os }}
           path: dist/${{ matrix.os }}/Apps-Purchases*
-      - name: List contents of current directory
-        run: find . -type f -print
       - name: Minimize uv cache
         run: uv cache prune --ci
