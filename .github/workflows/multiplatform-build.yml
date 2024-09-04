@@ -29,10 +29,10 @@ jobs:
       - name: Install uv for Windows
         if: ${{ matrix.os == 'windows-latest' }}
         run: irm https://astral.sh/uv/install.ps1 | iex
+        shell: powershell
       - name: Install uv for Ubuntu/macOS
         if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest' }}
         run: curl -LsSf https://astral.sh/uv/install.sh | sh
-        shell: powershell
       - name: Install Python 3.11 in uv
         run: uv python install 3.11
       - name: Install and activate venv from uv
