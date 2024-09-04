@@ -31,15 +31,6 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
-      - name: Upload Linux artifact
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/ubuntu-latest/Apps-Purchases*
-          asset_name: Apps-Purchases-linux(ubuntu)
-          asset_content_type: application/octet-stream
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
       - name: Upload macOS artifact
         uses: actions/upload-release-asset@v1
         with:
@@ -55,6 +46,15 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/windows-latest/Apps-Purchases*
           asset_name: Apps-Purchases-Windows
+          asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      - name: Upload Linux artifact
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/ubuntu-latest/Apps-Purchases*
+          asset_name: Apps-Purchases-linux(ubuntu)
           asset_content_type: application/octet-stream
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
