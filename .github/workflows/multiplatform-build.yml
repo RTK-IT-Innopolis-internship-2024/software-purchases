@@ -47,7 +47,7 @@ jobs:
         run: uv run pyinstaller main.py --onefile --name "Apps-Purchases" --distpath
           dist/${{ matrix.os }}
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Apps-Purchases-${{ matrix.os }}
           path: dist/${{ matrix.os }}/Apps-Purchases*

@@ -17,17 +17,17 @@ jobs:
           echo "Listing all artifacts:"
           gh api repos/${{ github.repository }}/actions/artifacts --paginate | jq -r '.artifacts[] | .name'
       - name: Download Windows App
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Apps-Purchases-windows-latest
           path: ./dist/
       - name: Download Linux App
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Apps-Purchases-ubuntu-latest
           path: ./dist/
       - name: Download macOS App
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Apps-Purchases-macos-latest
           path: ./dist/
