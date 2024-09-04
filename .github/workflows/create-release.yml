@@ -18,10 +18,23 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Download Windows App
+        uses: actions/download-artifact@v4
+        with:
+          name: Apps-Purchases-windows-latest
+          path: ./dist/
+      - name: Download Linux App
+        uses: actions/download-artifact@v4
+        with:
+          name: Apps-Purchases-ubuntu-latest
+          path: ./dist/
+      - name: Download macOS App
+        uses: actions/download-artifact@v4
+        with:
+          name: Apps-Purchases-macos-latest
+          path: ./dist/
       - name: List contents of current directory
-        run: ls -la
+        run: find . -type f -print
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -39,7 +52,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/windows-latest/Apps-Purchases.exe
+          asset_path: ./dist/Apps-Purchases-windows-latest
           asset_name: Apps-Purchases-Windows
           asset_content_type: application/octet-stream
       - name: Upload macOS artifact
@@ -48,7 +61,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/macos-latest/Apps-Purchases
+          asset_path: ./dist/Apps-Purchases-macos-latest
           asset_name: Apps-Purchases-macOS
           asset_content_type: application/octet-stream
       - name: Upload Linux artifact
@@ -57,6 +70,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/ubuntu-latest/Apps-Purchases
-          asset_name: Apps-Purchases-linux(ubuntu)
+          asset_path: ./dist/Apps-Purchases-ubuntu-latest
+          asset_name: Apps-Purchases-ubuntu
           asset_content_type: application/octet-stream
