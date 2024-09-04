@@ -36,7 +36,7 @@ jobs:
         with:
           tag_name: ${GITHUB_REF##*/}
           release_name: ${GITHUB_REF##*/}
-          body: ${{ Release_changes.md }}
+          body_path: Release_changes.md
           draft: false
           prerelease: false
       - name: Upload Windows artifact
