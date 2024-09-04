@@ -52,7 +52,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist/windows-latest/Apps-Purchases.exe
-          asset_name: Apps-Purchases-Windows
+          asset_name: Apps-Purchases-Windows.exe
           asset_content_type: application/octet-stream
       - name: Upload macOS artifact
         uses: actions/upload-release-asset@v1
