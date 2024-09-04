@@ -18,8 +18,8 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - name: List all files in dist directory
-        run: find dist/ -type f -print
+      - name: List contents of current directory
+        run: ls -la
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
