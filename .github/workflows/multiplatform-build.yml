@@ -51,5 +51,7 @@ jobs:
         with:
           name: Apps-Purchases-${{ matrix.os }}
           path: dist/${{ matrix.os }}/Apps-Purchases*
+      - name: Log directory content
+        run: ls -la dist/${{ matrix.os }}
       - name: Minimize uv cache
         run: uv cache prune --ci
