@@ -18,17 +18,17 @@ jobs:
           && sudo apt install gh -y
       - name: Download Windows App
         run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-windows-latest
-          --archive --dir ./dist
+          --dir ./dist/windows-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Download Linux App
         run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-ubuntu-latest
-          --archive --dir ./dist
+          --dir ./dist/ubuntu-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Download macOS App
         run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-macos-latest
-          --archive --dir ./dist
+          --dir ./dist/macos-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: List contents of current directory
