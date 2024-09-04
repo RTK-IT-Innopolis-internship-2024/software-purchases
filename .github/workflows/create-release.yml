@@ -18,8 +18,8 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-#      - name: Checkout code
-#        uses: actions/checkout@v4
+      - name: List all files in dist directory
+        run: find dist/${{ matrix.os }} -type f -print
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
