@@ -30,14 +30,17 @@ jobs:
         run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-macos-latest --dir ./dist/macos-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
+      - name: Set current date
+        id: set_current_date
+        run: echo "current_date=$(date +v%Y.%m.%d.%H.%M.%S)" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          tag_name: v${{ steps.set_current_date.outputs.current_date }}
-          release_name: v${{ steps.set_current_date.outputs.current_date }}
+          tag_name: ${{ env.current_date }}
+          release_name: ${{ env.current_date }}
           body_path: ${{ steps.compare_release.outputs.body_path }}
           draft: false
           prerelease: false
@@ -69,17 +72,10 @@ jobs:
           asset_name: Apps-Purchases-ubuntu
           asset_content_type: application/octet-stream
 
-  set_current_date:
-    runs-on: ubuntu-latest
-    outputs:
-      current_date: ${{ steps.date.outputs.current_date }}
-    steps:
-      - name: Get current date
-        id: date
-        run: echo "::set-output name=current_date::$(date +v%Y.%m.%d.%H.%M.%S)"
-
   compare_release:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.TOKEN }}
     outputs:
       body_path: ${{ steps.compare.outputs.body_path }}
     steps:
@@ -87,13 +83,12 @@ jobs:
         id: get_latest_release
         run: |
           latest_release=$(gh release view --json body --jq '.body')
-          echo "::set-output name=latest_release::$latest_release"
+          echo "latest_release=$latest_release" >> $GITHUB_ENV
       - name: Compare release notes
         id: compare
         run: |
           current_release=$(cat Release_changes.md)
-          if [ "$current_release" == "${{ steps.get_latest_release.outputs.latest_release }}" ]; then
-            echo "::set-output name=body_path::"
+          if [ "$current_release" == "${{ env.latest_release }}" ]; then
+            echo "body_path=" >> $GITHUB_ENV
           else
-            echo "::set-output name=body_path::Release_changes.md"
-          fi
+            echo "body_path=Release_changes.md" >> $GITHUB_ENV
