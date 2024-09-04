@@ -1,23 +1,16 @@
 ---
 name: Create Release
 on:
-  workflow_dispatch:
-    inputs:
-      tag_name:
-        description: Release tag name (e.g., v1.0.0)
-        required: true
-      release_name:
-        description: Release name
-        required: true
-      release_body:
-        description: Release description
-        required: false
+  push:
+    tags: [v*]
 jobs:
   create_release:
     runs-on: macos-latest
     strategy:
       fail-fast: false
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Download Windows App
         uses: actions/download-artifact@v4
         with:
@@ -41,9 +34,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          tag_name: ${{ github.event.inputs.tag_name }}
-          release_name: ${{ github.event.inputs.release_name }}
-          body: ${{ github.event.inputs.release_body }}
+          tag_name: ${{ "${GITHUB_REF##*/}" }}
+          release_name: ${{ Release "${GITHUB_REF##*/}" }}
+          body: ${{ Release_changes.md }}
           draft: false
           prerelease: false
       - name: Upload Windows artifact
