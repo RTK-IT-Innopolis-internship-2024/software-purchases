@@ -44,12 +44,12 @@ jobs:
       - name: Run yamlfix linter - fix yamls
         run: uv run yamlfix .
       - name: Build application with PyInstaller
-        run: uv run pyinstaller main.py --onefile --name "БФТ-Закупки" --distpath
+        run: uv run pyinstaller main.py --onefile --name "Apps-Purchases" --distpath
           dist/${{ matrix.os }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: БФТ-Закупки-${{ matrix.os }}
-          path: dist/${{ matrix.os }}/БФТ-Закупки*
+          name: Apps-Purchases-${{ matrix.os }}
+          path: dist/${{ matrix.os }}/Purchases*
       - name: Minimize uv cache
         run: uv cache prune --ci
