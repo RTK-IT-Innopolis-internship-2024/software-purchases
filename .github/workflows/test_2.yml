@@ -6,8 +6,8 @@ jobs:
   download_specific_artifacts:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+#      - name: Checkout
+#        uses: actions/checkout@v4
       - name: Install GitHub CLI
         run: |
           type -p curl >/dev/null || sudo apt install curl -y
