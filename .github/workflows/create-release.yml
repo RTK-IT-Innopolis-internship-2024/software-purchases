@@ -36,6 +36,10 @@ jobs:
       - name: Set current date
         id: set_current_date
         run: echo "current_date=$(date +v%Y.%m.%d.%H.%M.%S)" >> $GITHUB_OUTPUT
+      - name: Check Body
+        run: |
+          echo "body path:"
+          echo "${{ steps.compare_release.outputs.body_path }}"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -47,9 +51,6 @@ jobs:
           body_path: ${{ steps.compare_release.outputs.body_path }}
           draft: false
           prerelease: false
-        run: |
-          echo "body path:"
-          echo "${{ steps.compare_release.outputs.body_path }}"
       - name: Upload Windows artifact
         uses: actions/upload-release-asset@v1
         env:
