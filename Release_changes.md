@@ -1,1 +1,1 @@
-Тестовое описание релиза
+Some test to release body
