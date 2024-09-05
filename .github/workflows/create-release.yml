@@ -42,8 +42,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          tag_name: ${{ env.current_date }}
-          release_name: ${{ env.current_date }}
+          tag_name: ${{ steps.set_current_date.outputs.current_date }}
+          release_name: ${{ steps.set_current_date.outputs.current_date }}
           body_path: ${{ steps.compare_release.outputs.body_path }}
           draft: false
           prerelease: false
@@ -96,3 +96,4 @@ jobs:
             echo "body_path=" >> $GITHUB_OUTPUT
           else
             echo "body_path=Release_changes.md" >> $GITHUB_OUTPUT
+          fi
