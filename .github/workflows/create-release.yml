@@ -5,6 +5,7 @@ on:
 jobs:
   create_release:
     runs-on: ubuntu-latest
+    needs: compare_release
     strategy:
       fail-fast: false
     steps:
