@@ -86,12 +86,15 @@ jobs:
       - name: Get latest release with body
         id: get_latest_release_with_body
         run: |
-          releases=$(gh release list --limit 100 --json tagName,body --jq '.[] | {tagName: .tagName, body: .body}')
-          non_empty_body_releases=$(echo "$releases" | jq '. | select(.body != "")')
-          latest_release_body=$(echo "$non_empty_body_releases" | jq -r '.[0].body')
-          echo "latest_release_body=latest_release_body" >> $GITHUB_OUTPUT
-          echo "Latest release body:"
-          echo "$latest_release_body"
+          releases=$(gh release list --limit 100 --json tagName --jq '.[] | select(.tagName != null) | .tagName')
+          for tag in $releases; do
+            body=$(gh release view "$tag" --json body -q '.body')
+            if [ -n "$body" ]; then
+              echo "$body"
+              break
+            fi
+          done
+          echo "latest_release_body=$body" >> $GITHUB_OUTPUT
       - name: Compare release notes
         id: compare
         run: |-
