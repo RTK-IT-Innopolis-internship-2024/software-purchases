@@ -73,7 +73,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
           tag_name: ${{ env.current_date }}
-          release_name: Release ${{ env.current_date }}
+          name: Release ${{ env.current_date }}
           body: ${{ needs.find_some_body.outputs.final_release_body }}
           draft: false
           prerelease: false
