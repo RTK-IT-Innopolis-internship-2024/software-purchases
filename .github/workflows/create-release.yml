@@ -22,12 +22,12 @@ jobs:
               break
             fi
           done
-          echo "latest_release_body=$body" >> $GITHUB_STATE
+          echo "latest_release_body=$body" >> $GITHUB_ENV
       - name: Compare release notes
         id: compare
         run: |-
           current_release_body=$(cat Release_changes.md)
-          if [ "$current_release_body" == "$latest_release_body" ]; then
+          if [ "$current_release_body" == "${{ env.latest_release_body }}" ]; then
             echo "body_path=" >> $GITHUB_OUTPUT
           else
             echo "final_release_body=$current_release_body" >> $GITHUB_OUTPUT
@@ -65,18 +65,18 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Set current date
         id: set_current_date
-        run: echo "current_date=$(date +v%Y.%m.%d.%H.%M.%S)" >> $GITHUB_STATE
+        run: echo "current_date=$(date +v%Y.%m.%d.%H.%M.%S)" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          tag_name: $current_date
-          release_name: $current_date
+          tag_name: ${{ env.current_date }}
+          release_name: Release ${{ env.current_date }}
           body: ${{ needs.find_some_body.outputs.final_release_body }}
           draft: false
-          prerelease: false
+          prerelease: true
       - name: Upload Windows artifact
         uses: actions/upload-release-asset@v1
         env:
