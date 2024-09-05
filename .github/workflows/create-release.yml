@@ -109,5 +109,9 @@ jobs:
           else
             echo "body_path=Release_changes.md" >> $GITHUB_OUTPUT
           fi
+          echo "Latest release body:"
+          echo "$latest_release_body"
+          echo "Current release body:"
+          echo "$current_release_body"
           echo "body_path:"
           echo "$body_path"
