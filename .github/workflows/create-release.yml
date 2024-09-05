@@ -68,7 +68,7 @@ jobs:
         run: echo "current_date=$(date +v%Y.%m.%d.%H.%M.%S)" >> $GITHUB_ENV
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
@@ -76,31 +76,5 @@ jobs:
           release_name: Release ${{ env.current_date }}
           body: ${{ needs.find_some_body.outputs.final_release_body }}
           draft: false
-          prerelease: true
-      - name: Upload Windows artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/windows-latest/Apps-Purchases.exe
-          asset_name: Apps-Purchases-Windows.exe
-          asset_content_type: application/octet-stream
-      - name: Upload macOS artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/macos-latest/Apps-Purchases
-          asset_name: Apps-Purchases-macOS
-          asset_content_type: application/octet-stream
-      - name: Upload Linux artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/ubuntu-latest/Apps-Purchases
-          asset_name: Apps-Purchases-ubuntu
-          asset_content_type: application/octet-stream
+          prerelease: false
+          files: ./dist/
