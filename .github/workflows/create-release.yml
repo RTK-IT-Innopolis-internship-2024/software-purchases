@@ -19,20 +19,23 @@ jobs:
           && sudo apt update \
           && sudo apt install gh -y
       - name: Download Windows App
-        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-windows-latest --dir ./dist/windows-latest
+        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-windows-latest
+          --dir ./dist/windows-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Download Linux App
-        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-ubuntu-latest --dir ./dist/ubuntu-latest
+        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-ubuntu-latest
+          --dir ./dist/ubuntu-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Download macOS App
-        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-macos-latest --dir ./dist/macos-latest
+        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-macos-latest
+          --dir ./dist/macos-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Set current date
         id: set_current_date
-        run: echo "current_date=$(date +v%Y.%m.%d.%H.%M.%S)" >> $GITHUB_ENV
+        run: echo "current_date=$(date +v%Y.%m.%d.%H.%M.%S)" >> $GITHUB_OUTPUT
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -71,7 +74,6 @@ jobs:
           asset_path: ./dist/ubuntu-latest/Apps-Purchases
           asset_name: Apps-Purchases-ubuntu
           asset_content_type: application/octet-stream
-
   compare_release:
     runs-on: ubuntu-latest
     env:
@@ -81,16 +83,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Get latest release
-        id: get_latest_release
+      - name: Get latest release with body
+        id: get_latest_release_with_body
         run: |
-          latest_release=$(gh release view --json body --jq '.body')
-          echo "latest_release=$latest_release" >> $GITHUB_ENV
+          latest_release_with_body=$(gh release list --limit 100 --json tagName,body --jq '.[] | select(.body != null and .body != "") | .tagName' | head -n 1)
+          echo "latest_release_with_body=$latest_release_with_body" >> $GITHUB_OUTPUT
       - name: Compare release notes
         id: compare
-        run: |
+        run: |-
           current_release=$(cat Release_changes.md)
-          if [ "$current_release" == "${{ env.latest_release }}" ]; then
-            echo "body_path=" >> $GITHUB_ENV
+          if [ "$current_release" == "${{ steps.get_latest_release_with_body.outputs.latest_release_with_body }}" ]; then
+            echo "body_path=" >> $GITHUB_OUTPUT
           else
-            echo "body_path=Release_changes.md" >> $GITHUB_ENV
+            echo "body_path=Release_changes.md" >> $GITHUB_OUTPUT
