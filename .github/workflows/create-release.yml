@@ -95,7 +95,6 @@ jobs:
           for tag in $releases; do
             body=$(gh release view "$tag" --json body -q '.body')
             if [ -n "$body" ]; then
-              echo "$body"
               break
             fi
           done
@@ -112,12 +111,3 @@ jobs:
             echo "body_path=Release_changes.md" >> $GITHUB_OUTPUT
             echo "Comparison result: The bodies are different."
           fi
-          echo "Latest release body:"
-          echo "$latest_release_body"
-          echo "Current release body:"
-          echo "$current_release_body"
-      - name: Check Body
-        id: checK_body
-        run: |-
-          echo "body_path:"
-          echo "${{ steps.compare.outputs.body_path }}"
