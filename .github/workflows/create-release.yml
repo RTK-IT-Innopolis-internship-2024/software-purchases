@@ -106,8 +106,10 @@ jobs:
           latest_release_body="${{ steps.get_latest_release_with_body.outputs.latest_release_body }}"
           if [ "$current_release_body" == "$latest_release_body" ]; then
             echo "body_path=" >> $GITHUB_OUTPUT
+            echo "Comparison result: The bodies are the same."
           else
             echo "body_path=Release_changes.md" >> $GITHUB_OUTPUT
+            echo "Comparison result: The bodies are different."
           fi
           echo "Latest release body:"
           echo "$latest_release_body"
