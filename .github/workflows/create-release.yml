@@ -116,4 +116,4 @@ jobs:
           echo "Current release body:"
           echo "$current_release_body"
           echo "body_path:"
-          echo "$body_path"
+          echo "${{ steps.compare.outputs.body_path }}"
