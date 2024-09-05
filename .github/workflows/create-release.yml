@@ -115,5 +115,8 @@ jobs:
           echo "$latest_release_body"
           echo "Current release body:"
           echo "$current_release_body"
+      - name: Check Body
+        id: checK_body
+        run: |-
           echo "body_path:"
           echo "${{ steps.compare.outputs.body_path }}"
