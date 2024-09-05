@@ -86,15 +86,17 @@ jobs:
       - name: Get latest release with body
         id: get_latest_release_with_body
         run: |
-          latest_release_with_body=$(gh release list --limit 100 --json tagName --jq '.[] | select(.tagName != null) | .tagName' | xargs -I {} gh release view {} --json body -q '.body' | grep -v '^null$' | head -n 1)
-          echo "latest_release_with_body=$latest_release_with_body" >> $GITHUB_OUTPUT
+          releases=$(gh release list --limit 100 --json tagName,body --jq '.[] | {tagName: .tagName, body: .body}')
+          non_empty_body_releases=$(echo "$releases" | jq '. | select(.body != "")')
+          latest_release_body=$(echo "$non_empty_body_releases" | jq -r '.[0].body')
+          echo "latest_release_body=latest_release_body" >> $GITHUB_OUTPUT
           echo "Latest release body:"
-          echo "$latest_release_with_body"
+          echo "$latest_release_body"
       - name: Compare release notes
         id: compare
         run: |-
           current_release_body=$(cat Release_changes.md)
-          latest_release_body="${{ steps.get_latest_release_with_body.outputs.latest_release_with_body }}"
+          latest_release_body="${{ steps.get_latest_release_with_body.outputs.latest_release_body }}"
           if [ "$current_release_body" == "$latest_release_body" ]; then
             echo "body_path=" >> $GITHUB_OUTPUT
           else
