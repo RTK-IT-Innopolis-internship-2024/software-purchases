@@ -75,7 +75,10 @@ jobs:
           body: ${{ needs.find_some_body.outputs.final_release_body }}
           draft: false
           prerelease: false
-          files: ./dist/*
+          files: |
+            ./dist/windows-latest/Apps-Purchases-windows-latest.exe
+            ./dist/macos-latest/Apps-Purchases-macos-latest
+            ./dist/ubuntu-latest/Apps-Purchases-ubuntu-latest
       - name: List files in dist directory
         run: |-
           echo "Listing all files in the dist directory:"
