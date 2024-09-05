@@ -28,7 +28,7 @@ jobs:
         run: |-
           current_release_body=$(cat Release_changes.md)
           if [ "$current_release_body" == "${{ env.latest_release_body }}" ]; then
-            echo "body_path=" >> $GITHUB_OUTPUT
+            echo "final_release_body=" >> $GITHUB_OUTPUT
           else
             echo "final_release_body=$current_release_body" >> $GITHUB_OUTPUT
           fi
