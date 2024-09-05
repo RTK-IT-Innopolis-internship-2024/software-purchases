@@ -47,6 +47,9 @@ jobs:
           body_path: ${{ steps.compare_release.outputs.body_path }}
           draft: false
           prerelease: false
+        run: |
+          echo "body path:"
+          echo "${{ steps.compare_release.outputs.body_path }}"
       - name: Upload Windows artifact
         uses: actions/upload-release-asset@v1
         env:
@@ -105,7 +108,5 @@ jobs:
           else
             echo "body_path=Release_changes.md" >> $GITHUB_OUTPUT
           fi
-          echo "Latest release body:"
-          echo "$latest_release_body"
-          echo "Current release body:"
-          echo "$current_release_body"
+          echo "body_path:"
+          echo "$body_path"
