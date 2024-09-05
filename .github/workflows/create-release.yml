@@ -88,6 +88,8 @@ jobs:
         run: |
           latest_release_with_body=$(gh release list --limit 100 --json tagName --jq '.[] | select(.tagName != null) | .tagName' | xargs -I {} gh release view {} --json body -q '.body' | grep -v '^null$' | head -n 1)
           echo "latest_release_with_body=$latest_release_with_body" >> $GITHUB_OUTPUT
+          echo "Latest release body:"
+          echo "$latest_release_with_body"
       - name: Compare release notes
         id: compare
         run: |-
@@ -98,3 +100,5 @@ jobs:
           else
             echo "body_path=Release_changes.md" >> $GITHUB_OUTPUT
           fi
+          echo "Current release body:"
+          echo "$current_release_body"
