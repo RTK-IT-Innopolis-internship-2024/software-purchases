@@ -22,7 +22,7 @@ uv python install
 
 #### Install venv
 ```
-uv venv
+uv run main.py
 ```
 
 #### Install pre-commit hooks
