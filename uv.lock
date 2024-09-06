@@ -72,6 +72,18 @@ wheels = [
 ]
 
 [[package]]
+name = "eventsourcing"
+version = "9.3.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bf/b3/58e66ca3c679bed32cb4281e058fc258abf565bd2718ecbd2a27133f0e22/eventsourcing-9.3.2.tar.gz", hash = "sha256:3a3355969445d2eb48c0068a1389d64717bdd9dc03d5f3f57a209c70805d0f36", size = 140640 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8a/ea/980cc0c5bffad792ca3fa106c4cc92ed66368e0c74c2c5503c314c82764d/eventsourcing-9.3.2-py3-none-any.whl", hash = "sha256:61d19fae59457eeed6acb5c4da2b8c5ea620d4937ed78f6ec6be161a9b41a06d", size = 197435 },
+]
+
+[[package]]
 name = "filelock"
 version = "3.15.4"
 source = { registry = "https://pypi.org/simple" }
@@ -451,12 +463,14 @@ name = "software-purchases"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "eventsourcing" },
     { name = "pre-commit" },
     { name = "pybind11" },
     { name = "pyinstaller" },
     { name = "pyqt6" },
     { name = "setuptools" },
     { name = "wheel" },
+    { name = "xlsxwriter" },
 ]
 
 [package.dev-dependencies]
@@ -468,12 +482,14 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "eventsourcing", specifier = ">=9.3.2" },
     { name = "pre-commit", specifier = ">=3.8.0" },
     { name = "pybind11", specifier = ">=2.13.5" },
     { name = "pyinstaller", specifier = ">=6.10.0" },
     { name = "pyqt6", specifier = ">=6.7.1" },
     { name = "setuptools", specifier = ">=74.0.0" },
     { name = "wheel", specifier = ">=0.44.0" },
+    { name = "xlsxwriter", specifier = ">=3.2.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -522,6 +538,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b7/a0/95e9e962c5fd9da11c1e28aa4c0d8210ab277b1ada951d2aee336b505813/wheel-0.44.0.tar.gz", hash = "sha256:a29c3f2817e95ab89aa4660681ad547c0e9547f20e75b0562fe7723c9a2a9d49", size = 100733 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1b/d1/9babe2ccaecff775992753d8686970b1e2755d21c8a63be73aba7a4e7d77/wheel-0.44.0-py3-none-any.whl", hash = "sha256:2376a90c98cc337d18623527a97c31797bd02bad0033d41547043a1cbfbe448f", size = 67059 },
+]
+
+[[package]]
+name = "xlsxwriter"
+version = "3.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a6/c3/b36fa44a0610a0f65d2e65ba6a262cbe2554b819f1449731971f7c16ea3c/XlsxWriter-3.2.0.tar.gz", hash = "sha256:9977d0c661a72866a61f9f7a809e25ebbb0fb7036baa3b9fe74afcfca6b3cb8c", size = 198732 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a7/ea/53d1fe468e63e092cf16e2c18d16f50c29851242f9dd12d6a66e0d7f0d02/XlsxWriter-3.2.0-py3-none-any.whl", hash = "sha256:ecfd5405b3e0e228219bcaf24c2ca0915e012ca9464a14048021d21a995d490e", size = 159925 },
 ]
 
 [[package]]

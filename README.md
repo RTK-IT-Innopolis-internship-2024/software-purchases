@@ -8,8 +8,31 @@
 
 Автоматизировать и создать единое место учета всех действий по закупкам ПО в компании с учетом требований отдела, осуществляющего сбор и обработку заявок.
 
+### Installation:
 
-## Some code:
+#### Install uv
 ```
-pyi-makespec main.py --onefile --name БФТ-Закупки
+irm https://astral.sh/uv/install.ps1 | iex
+```
+
+#### Install python
+```
+uv python install
+```
+
+#### Install venv
+```
+uv venv
+```
+
+#### Install pre-commit hooks
+```
+pre-commit install
+```
+
+#### Open ./src or main.py and just code it
+
+#### Open your app
+```
+uv run main.py
 ```

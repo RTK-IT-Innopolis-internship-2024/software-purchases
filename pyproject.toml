@@ -5,12 +5,14 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "eventsourcing>=9.3.2",
     "pre-commit>=3.8.0",
     "pybind11>=2.13.5",
     "pyinstaller>=6.10.0",
     "pyqt6>=6.7.1",
     "setuptools>=74.0.0",
     "wheel>=0.44.0",
+    "xlsxwriter>=3.2.0",
 ]
 
 [tool.uv]
