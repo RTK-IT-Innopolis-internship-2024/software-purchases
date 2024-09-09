@@ -4,13 +4,11 @@ from eventsourcing.domain import Aggregate, event
 class SoftwareClass(Aggregate):
     """
     Represents the 'SoftwareClass' aggregate.
-    Представляет агрегат 'SoftwareClass' (Класс программного обеспечения).
     """
 
     class Registered(Aggregate.Created):
         """
         Event triggered when a software class is registered.
-        Событие регистрации класса программного обеспечения.
         """
 
         software_class_number: str

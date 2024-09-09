@@ -61,5 +61,6 @@ extend-ignore = [
     "TD003",
     "FIX002", # too verbose descriptions of todos
     "D203",
-    "ISC001"
+    "ISC001",
+    "PLR0913", # Too many arguments in function definition (x > 5)
 ]
