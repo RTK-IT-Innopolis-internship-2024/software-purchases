@@ -6,14 +6,14 @@ from src.backend.objects.software_class import SoftwareClass
 class Software:
     def __init__(
         self,
-        country: Country,
-        software_class: SoftwareClass,
+        country: Country | str,
+        software_class: SoftwareClass | str,
         name: str,
-        maker_name: str,
+        maker_name: str | None,
         website: str | None,
         purpose: str | None,
         software_analogs: str | None,
-        company: Company | None,
+        company: Company | str | None,
         registry_link: str | None,
         *,
         is_in_registry: bool,

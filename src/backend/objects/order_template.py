@@ -14,7 +14,7 @@ class OrderTemplate:
         companies: list[Company],
         countries: list[Country],
         supervisors: list[Supervisor],
-        license_type: list[LicenseType],
+        license_types: list[LicenseType],
         software_classes: list[SoftwareClass],
         software_list: list[Software],
         order_list: list[Order] | None,
@@ -23,7 +23,7 @@ class OrderTemplate:
         self.companies = companies
         self.countries = countries
         self.supervisors = supervisors
-        self.license_type = license_type
+        self.license_type = license_types
         self.software_classes = software_classes
         self.software_list = software_list
         self.order_list = order_list
