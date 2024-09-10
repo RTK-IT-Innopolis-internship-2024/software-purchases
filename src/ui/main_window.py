@@ -35,15 +35,15 @@ class MainWindow(QMainWindow):
         self.load_data()
 
     def create_toolbars(self) -> None:
-        self.rightbar = ToolBar(self, orientation=Qt.Orientation.Vertical, style=Qt.ToolButtonStyle.ToolButtonIconOnly, icon_size=(30, 30))
+        self.bottombar = ToolBar(self, orientation=Qt.Orientation.Horizontal, style=Qt.ToolButtonStyle.ToolButtonIconOnly, icon_size=(30, 30))
 
-        self.rightbar.add_separator()
+        self.bottombar.add_separator()
 
-        self.rightbar.add_button("Загрузить данные", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-276.ico"), self.load_document)
-        self.rightbar.add_button("Экспорт данных", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-265.ico"), self.export_data)
-        self.rightbar.add_button("Настройки", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-315.ico"), self.settings_window)
+        self.bottombar.add_button("Загрузить данные", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-276.ico"), self.load_document)
+        self.bottombar.add_button("Экспорт данных", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-265.ico"), self.export_data)
+        self.bottombar.add_button("Настройки", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-315.ico"), self.settings_window)
 
-        self.addToolBar(Qt.ToolBarArea.RightToolBarArea, self.rightbar)
+        self.addToolBar(Qt.ToolBarArea.BottomToolBarArea, self.bottombar)
 
     def create_treeview(self) -> TreeView:
         return TreeView(self)
