@@ -1,15 +1,18 @@
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtGui import QAction, QIcon
-from PyQt6.QtWidgets import QToolBar, QWidget, QSizePolicy
+from PyQt6.QtWidgets import QSizePolicy, QToolBar, QWidget
 
 
 class ToolBar(QToolBar):
-    def __init__(self, parent,
-                 orientation: Qt.Orientation = Qt.Orientation.Horizontal,
-                 style: Qt.ToolButtonStyle = Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
-                 icon_size: tuple[int, int] = (32, 32)) -> None:
+    def __init__(
+        self,
+        parent,
+        orientation: Qt.Orientation = Qt.Orientation.Horizontal,
+        style: Qt.ToolButtonStyle = Qt.ToolButtonStyle.ToolButtonTextUnderIcon,
+        icon_size: tuple[int, int] = (32, 32),
+    ) -> None:
         super().__init__(parent)
-        self.actions_call = {}
+        self.actions_call: dict[str, QAction] = {}
         self.setOrientation(orientation)
 
         self.setToolButtonStyle(style)
@@ -22,6 +25,5 @@ class ToolBar(QToolBar):
 
     def add_separator(self) -> None:
         separator = QWidget(self)
-        separator.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        separator.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.addWidget(separator)

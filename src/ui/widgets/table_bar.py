@@ -1,10 +1,10 @@
-import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QHBoxLayout, QPushButton, QDateEdit, QSpacerItem, QSizePolicy
 from PyQt6.QtCore import QDate
 from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QDateEdit, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QSpacerItem, QWidget
+
 
 class TableBar(QWidget):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         layout = QHBoxLayout()
 
@@ -39,7 +39,6 @@ class TableBar(QWidget):
         # Button with icon "+"
         self.add_button = QPushButton()
         self.add_button.setIcon(QIcon.fromTheme("list-add"))
-        #self.add_button.setStyleSheet("color: #4CAF50;")
         layout.addWidget(self.add_button)
 
         self.setLayout(layout)

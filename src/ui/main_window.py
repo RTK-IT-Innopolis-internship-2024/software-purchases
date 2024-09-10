@@ -1,10 +1,12 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QMainWindow, QWidget, QHBoxLayout, QTableView, QVBoxLayout
+from PyQt6.QtWidgets import QHBoxLayout, QMainWindow, QTableView, QVBoxLayout, QWidget
+
 from ..utils.config import AppConfig
+from .widgets.main_table import CenteredCheckboxDelegate, TableModel
+from .widgets.table_bar import TableBar
 from .widgets.toolbar import ToolBar
 from .widgets.treeview import TreeView
-from .widgets.main_table import TableModel, CenteredCheckboxDelegate
-from .widgets.table_bar import TableBar
+
 
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
@@ -26,53 +28,45 @@ class MainWindow(QMainWindow):
         content_layout = QHBoxLayout()
         content_layout.addWidget(self.treeview)
         content_layout.addWidget(self.table, stretch=1)
-        
+
         layout.addLayout(content_layout)
 
         self.create_toolbars()
         self.load_data()
 
     def create_toolbars(self) -> None:
-        self.rightbar = ToolBar(self, orientation=Qt.Orientation.Vertical,
-                                style=Qt.ToolButtonStyle.ToolButtonIconOnly,
-                                icon_size=(30, 30))
+        self.rightbar = ToolBar(self, orientation=Qt.Orientation.Vertical, style=Qt.ToolButtonStyle.ToolButtonIconOnly, icon_size=(30, 30))
 
         self.rightbar.add_separator()
-    
-        self.rightbar.add_button(
-            "Загрузить данные", "resources/assets/icons/windows/shell32-276.ico", self.load_document)
-        self.rightbar.add_button(
-            "Экспорт данных", "resources/assets/icons/windows/shell32-265.ico", self.export_data)
-        self.rightbar.add_button(
-            "Настройки", "resources/assets/icons/windows/shell32-315.ico", self.settings_window)
-        
+
+        self.rightbar.add_button("Загрузить данные", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-276.ico"), self.load_document)
+        self.rightbar.add_button("Экспорт данных", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-265.ico"), self.export_data)
+        self.rightbar.add_button("Настройки", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-315.ico"), self.settings_window)
+
         self.addToolBar(Qt.ToolBarArea.RightToolBarArea, self.rightbar)
 
     def create_treeview(self) -> TreeView:
         return TreeView(self)
-    
+
     def create_table(self) -> QTableView:
-        view = QTableView(self)
-        return view
-    
-    def set_table_model(self):
+        return QTableView(self)
+
+    def set_table_model(self) -> None:
         model = TableModel(self.data)
         self.table.setModel(model)
         self.table.setColumnWidth(0, 10)
         self.table.setColumnWidth(1, 10)
         self.table.setItemDelegateForColumn(0, CenteredCheckboxDelegate(self.table))
 
-    def set_tree_model(self):
-        #model = TreeModel(self.data)
-        #self.treeview.load_model(model)
+    def set_tree_model(self) -> None:
         pass
-    
-    def load_data(self):
+
+    def load_data(self) -> None:
         self.data = {
-                'doc1': [
+            "doc1": [
                 [str(i) for i in range(20)],
-                [str(i+20) for i in range(20)],
-                [str(i+40) for i in range(20)],
+                [str(i + 20) for i in range(20)],
+                [str(i + 40) for i in range(20)],
             ]
         }
         self.set_table_model()

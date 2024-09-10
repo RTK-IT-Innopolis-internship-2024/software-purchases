@@ -1,6 +1,4 @@
 from PyQt6.QtWidgets import QTreeView
-from PyQt6.QtGui import QFileSystemModel
-from PyQt6.QtCore import QDir, Qt, QAbstractTableModel, QVariant, QModelIndex
 
 
 class TreeView(QTreeView):
