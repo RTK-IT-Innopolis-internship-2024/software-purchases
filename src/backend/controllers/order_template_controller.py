@@ -32,6 +32,19 @@ def get_main_order_template() -> OrderTemplate:  # TODO: implement compare and e
     return get_order_template(order_template_file_path)
 
 
+def parse_quarter(quarter: str) -> int:
+    if quarter == "1 квартал":
+        return 1
+    if quarter == "2 квартал":
+        return 2
+    if quarter == "3 квартал":
+        return 3
+    if quarter == "4 квартал":
+        return 4
+    error_message = f"Invalid quarter: {quarter}"
+    raise ValueError(error_message)
+
+
 def get_order_template(order_template_file_path: str) -> OrderTemplate:
     order_template_workbook = load_workbook(filename=order_template_file_path, data_only=True)
     sheets_data = {}
@@ -156,41 +169,45 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
         raise ValueError(error_message)
     order_list = []
     for row in sheets_data["Заявки"][3:]:
-        if row[1] is not None:
-            order_supervisor_name = str(row[1])
+        if row[3] is not None:
+            order_year = int(row[1])
+            order_quarter = parse_quarter(row[2])
+            order_supervisor_name = str(row[3])
             if order_supervisor_name not in supervisors_map:
                 error_message = f"Supervisor '{order_supervisor_name}' not found in the 'ФИО Руководителя' sheet."
                 raise ValueError(error_message)
             order_supervisor = supervisors_map[order_supervisor_name]
-            order_employee_name = str(row[2])
-            order_software_name = str(row[3])
+            order_employee_name = str(row[4])
+            order_software_name = str(row[5])
             if order_software_name not in software_list_map:
                 error_message = f"Software '{order_software_name}' not found in the 'Наименование ПО' sheet."
                 raise ValueError(error_message)
             order_software = software_list_map[order_software_name]
-            order_tariff_plan = str(row[5])
-            order_login_and_password = str(row[6]) if row[6] is not None else None
-            order_number_license = int(row[8])
-            order_is_new_license = row[9] in ["новая", "Новая", "НОВАЯ"]
-            order_price_for_one = float(row[10])
-            order_licenses_period = row[12] if row[12] is not None else None
+            order_tariff_plan = str(row[7])
+            order_login_and_password = str(row[8]) if row[8] is not None else None
+            order_number_license = int(row[10])
+            order_is_new_license = row[11] in ["новая", "Новая", "НОВАЯ"]
+            order_price_for_one = float(row[12])
+            order_licenses_period = row[14] if row[14] is not None else None
             if order_licenses_period is not None:
                 order_licenses_period = order_licenses_period.date()
-            order_license_type_name = str(row[13])
+            order_license_type_name = str(row[15])
             if order_license_type_name not in licenses_types_map:
                 error_message = f"License type '{order_license_type_name}' not found in the 'Тип лицензии' sheet."
                 raise ValueError(error_message)
             order_license_type = licenses_types_map[order_license_type_name]
-            order_useful_life = str(row[14])
-            order_is_registered = row[16] in ["да", "Да", "ДА"]
-            order_is_analog_in_registry = row[17] in ["да", "Да", "ДА"]
-            order_company_which_will_use_name = str(row[18])
+            order_useful_life = str(row[16])
+            order_is_registered = row[18] in ["да", "Да", "ДА"]
+            order_is_analog_in_registry = row[19] in ["да", "Да", "ДА"]
+            order_company_which_will_use_name = str(row[20])
             if order_company_which_will_use_name not in companies_map:
                 error_message = f"Company '{order_company_which_will_use_name}' not found in the 'Наименование проекта' sheet."
                 raise ValueError(error_message)
             order_company_which_will_use = companies_map[order_company_which_will_use_name]
             order_list.append(
                 Order(
+                    year=order_year,
+                    quarter=order_quarter,
                     supervisor=order_supervisor,
                     software=order_software,
                     employee_name=order_employee_name,

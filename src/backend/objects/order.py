@@ -9,6 +9,8 @@ from src.backend.objects.supervisor import Supervisor
 class Order:
     def __init__(
         self,
+        year: int,
+        quarter: int,
         supervisor: Supervisor,
         software: Software,
         employee_name: str,
@@ -24,6 +26,8 @@ class Order:
         is_registered: bool,
         is_analog_in_registry: bool,
     ):
+        self.year = year
+        self.quarter = quarter
         self.supervisor = supervisor
         self.software = software
         self.employee_name = employee_name

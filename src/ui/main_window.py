@@ -59,11 +59,13 @@ class MainWindow(QMainWindow):
         return QTableView(self)
 
     def set_table_model(self) -> None:
-        if self.data is not None or self.table is None:
+        if self.data is None:
             return
         model = TableModel(self.data)
         self.table.setModel(model)
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        header = self.table.horizontalHeader()
+        if header is not None:
+            header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
         self.table.setColumnWidth(0, 10)
         self.table.setColumnWidth(1, 10)
         self.table.setItemDelegateForColumn(0, CenteredCheckboxDelegate(self.table))

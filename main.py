@@ -11,6 +11,5 @@ if __name__ == "__main__":
     dt_end = datetime.strptime("2024-10-20", "%Y-%m-%d").replace(tzinfo=UTC).date()
 
     order_templates_by_period = order_template_controller.get_order_templates_by_period(dt_start, dt_end)[0]
-
     # your code
     app.run()

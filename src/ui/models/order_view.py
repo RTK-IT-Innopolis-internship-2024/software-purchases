@@ -2,6 +2,8 @@ from src.backend.objects.order import Order
 from src.ui.models.column import TableColumn
 
 headers = [
+    TableColumn("Год", edit=True),
+    TableColumn("Квартал", edit=True),
     TableColumn("Руководитель", edit=True),
     TableColumn("Сотрудник", edit=True),
     TableColumn("Наименование ПО", edit=True),
@@ -29,6 +31,8 @@ class OrderView:
     def __init__(
         self,
         order: Order,
+        year: int,
+        quarter: int,
         supervisor_name: str,
         employee_name: str,
         software_name: str,
@@ -51,6 +55,8 @@ class OrderView:
         alternatives: str,
     ):
         self.order = order
+        self.year = year
+        self.quarter = quarter
         self.supervisor_name = supervisor_name
         self.employee_name = employee_name
         self.software_name = software_name
@@ -74,6 +80,8 @@ class OrderView:
 
     def to_array(self) -> list:
         return [
+            self.year,
+            self.quarter,
             self.supervisor_name,
             self.employee_name,
             self.software_name,
@@ -100,6 +108,8 @@ class OrderView:
     def from_order(order: Order) -> "OrderView":
         return OrderView(
             order=order,
+            year=order.year,
+            quarter=order.quarter,
             supervisor_name=order.supervisor.name,
             employee_name=order.employee_name,
             software_name=order.software.name,
