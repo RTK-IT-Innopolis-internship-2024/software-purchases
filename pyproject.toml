@@ -68,5 +68,7 @@ extend-ignore = [
     "PLR0913", # Too many arguments in function definition (x > 5)
     "B018", # Found useless expression. Either assign it to a variable or remove it.
     "PLR0912", # Too many branches
-    "PLR0915", # Too many statements
+    "PLR0915", # Too many statements,
+    "FBT001", # Found boolean positional arg
+    "FBT002", # Found boolean positional arg
 ]

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 from openpyxl import load_workbook
@@ -6,6 +6,7 @@ from openpyxl import load_workbook
 from src.backend.objects.company import Company
 from src.backend.objects.country import Country
 from src.backend.objects.license_type import LicenseType
+from src.backend.objects.order import Order
 from src.backend.objects.order_template import OrderTemplate
 from src.backend.objects.software import Software
 from src.backend.objects.software_class import SoftwareClass
@@ -49,27 +50,36 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
         error_message = "No valid country data found in the 'Страны' sheet."
         raise ValueError(error_message)
     companies = []
+    companies_map = {}
     for row in sheets_data["Наименование проекта"][1:]:
         if row[0] is not None:
-            license_type_name = str(row[0])
-            companies.append(Company(name=license_type_name))
+            company_name = str(row[0])
+            company = Company(name=company_name)
+            companies.append(company)
+            companies_map[company_name] = company
     if len(companies) == 0:
         error_message = "No valid company data found in the 'Наименование проекта' sheet."
         raise ValueError(error_message)
     supervisors = []
+    supervisors_map = {}
     for row in sheets_data["ФИО Руководителя"][1:]:
         if row[0] is not None:
             supervisor_name = str(row[0])
             supervisor_email = str(row[1]) if row[1] is not None else None
-            supervisors.append(Supervisor(name=supervisor_name, email=supervisor_email))
+            supervisor = Supervisor(name=supervisor_name, email=supervisor_email)
+            supervisors.append(supervisor)
+            supervisors_map[supervisor_name] = supervisor
     if len(supervisors) == 0:
         error_message = "No valid supervisor data found in the 'ФИО Руководителя' sheet."
         raise ValueError(error_message)
     licenses_types = []
+    licenses_types_map = {}
     for row in sheets_data["тип лицензии"][1:]:
         if row[0] is not None:
             license_type_name = str(row[0])
-            licenses_types.append(LicenseType(name=license_type_name))
+            license_type = LicenseType(name=license_type_name)
+            licenses_types.append(license_type)
+            licenses_types_map[license_type_name] = license_type
     if len(licenses_types) == 0:
         error_message = "No valid license type data found in the 'тип лицензии' sheet."
         raise ValueError(error_message)
@@ -89,6 +99,7 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
                 )
             )
     software_list = []
+    software_list_map = {}
     for row in sheets_data["Наименование ПО"][1:]:
         if row[0] is not None:
             software_name = str(row[0])
@@ -126,24 +137,77 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
                 software_company = None
             software_registry_link = str(row[9]) if row[9] is not None else None
             software_is_in_registry = row[8] in ["да", "Да", "ДА"]
-            software_list.append(
-                Software(
-                    country=software_country,
-                    software_class=software_software_class,
-                    name=software_name,
-                    maker_name=software_maker_name,
-                    website=software_website,
-                    purpose=software_purpose,
-                    software_analogs=software_software_analogs,
-                    company=software_company,
-                    registry_link=software_registry_link,
-                    is_in_registry=software_is_in_registry,
-                )
+            software = Software(
+                country=software_country,
+                software_class=software_software_class,
+                name=software_name,
+                maker_name=software_maker_name,
+                website=software_website,
+                purpose=software_purpose,
+                software_analogs=software_software_analogs,
+                company=software_company,
+                registry_link=software_registry_link,
+                is_in_registry=software_is_in_registry,
             )
+            software_list.append(software)
+            software_list_map[software_name] = software
     if len(software_list) == 0:
         error_message = "No valid software data found in the 'Наименование ПО' sheet."
         raise ValueError(error_message)
-    order_list = None  # TODO: implement part with order_list
+    order_list = []
+    for row in sheets_data["Заявки"][3:]:
+        if row[1] is not None:
+            order_supervisor_name = str(row[1])
+            if order_supervisor_name not in supervisors_map:
+                error_message = f"Supervisor '{order_supervisor_name}' not found in the 'ФИО Руководителя' sheet."
+                raise ValueError(error_message)
+            order_supervisor = supervisors_map[order_supervisor_name]
+            order_employee_name = str(row[2])
+            order_software_name = str(row[3])
+            if order_software_name not in software_list_map:
+                error_message = f"Software '{order_software_name}' not found in the 'Наименование ПО' sheet."
+                raise ValueError(error_message)
+            order_software = software_list_map[order_software_name]
+            order_tariff_plan = str(row[5])
+            order_login_and_password = str(row[6]) if row[6] is not None else None
+            order_number_license = int(row[8])
+            order_is_new_license = row[9] in ["новая", "Новая", "НОВАЯ"]
+            order_price_for_one = float(row[10])
+            order_licenses_period = row[12] if row[12] is not None else None
+            if order_licenses_period is not None:
+                order_licenses_period = order_licenses_period.date()
+            order_license_type_name = str(row[13])
+            if order_license_type_name not in licenses_types_map:
+                error_message = f"License type '{order_license_type_name}' not found in the 'Тип лицензии' sheet."
+                raise ValueError(error_message)
+            order_license_type = licenses_types_map[order_license_type_name]
+            order_useful_life = str(row[14])
+            order_is_registered = row[16] in ["да", "Да", "ДА"]
+            order_is_analog_in_registry = row[17] in ["да", "Да", "ДА"]
+            order_company_which_will_use_name = str(row[18])
+            if order_company_which_will_use_name not in companies_map:
+                error_message = f"Company '{order_company_which_will_use_name}' not found in the 'Наименование проекта' sheet."
+                raise ValueError(error_message)
+            order_company_which_will_use = companies_map[order_company_which_will_use_name]
+            order_list.append(
+                Order(
+                    supervisor=order_supervisor,
+                    software=order_software,
+                    employee_name=order_employee_name,
+                    tariff_plan=order_tariff_plan,
+                    login_and_password=order_login_and_password,
+                    number_license=order_number_license,
+                    is_new_license=order_is_new_license,
+                    price_for_one=order_price_for_one,
+                    licenses_period=order_licenses_period,
+                    license_type=order_license_type,
+                    useful_life=order_useful_life,
+                    is_registered=order_is_registered,
+                    is_analog_in_registry=order_is_analog_in_registry,
+                    company_which_will_use=order_company_which_will_use,
+                )
+            )
+
     return OrderTemplate(
         file_path=order_template_file_path,
         companies=companies,
@@ -174,10 +238,14 @@ def check_mandatory_sheets(sheets_titles: list[str]) -> None:
 
 def get_order_templates_paths(start_date: date, end_date: date) -> list[str]:
     order_templates_path = Path(AppConfig.get_resource_path("orders/order_templates"))
-    start_date
-    end_date
-    # TODO: implement some code to choose which files we take by period
-    return [str(file) for file in order_templates_path.glob("*.xlsx")]
+    # take files, that were last modified in this period
+    files = []
+    for file in order_templates_path.glob("*.xlsx"):
+        file_date = datetime.fromtimestamp(file.stat().st_mtime, tz=UTC).date()
+        if file_date >= start_date and file_date <= end_date:
+            files.append(str(file))
+
+    return files
 
 
 def get_order_templates_by_period(start_date: date, end_date: date) -> list[OrderTemplate]:

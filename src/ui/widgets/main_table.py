@@ -4,28 +4,9 @@ from PyQt6.QtCore import QAbstractTableModel, QModelIndex, Qt, QVariant
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QStyledItemDelegate
 
-headers = [
-    "Руководитель",
-    "Сотрудник",
-    "Наименование ПО",
-    "Производитель ПО",
-    "Тарифный план",
-    "Логин и пароль",
-    "Страна производства",
-    "Количество",
-    "Продление/новая",
-    "Цена за единицу",
-    "Стоимость",
-    "Окончание срока действия текущих лицензий",
-    "Лицензия",
-    "Срок полезного использования",
-    "Тип ПО по классификатору Минкомсвязи",
-    "Наличие в реестре",
-    "Наличие аналогов",
-    "Проект",
-    "Ссылка",
-    "Альтернативы",
-]
+from src.ui.models.order_template_view import OrderTemplateView
+
+from ..models.order_view import headers
 
 
 class CenteredCheckboxDelegate(QStyledItemDelegate):
@@ -35,11 +16,11 @@ class CenteredCheckboxDelegate(QStyledItemDelegate):
 
 
 class TableModel(QAbstractTableModel):
-    def __init__(self, data) -> None:
+    def __init__(self, data: list[OrderTemplateView]) -> None:
         super().__init__()
         agg_data = []
-        for rows in data.values():
-            agg_data.extend(rows)
+        for order_template in data:
+            agg_data.extend(order_template.to_array())
         self._data = agg_data
 
         self.check_states = [Qt.CheckState.Unchecked] * len(self._data)  # Initialize all checkboxes to "unchecked"
@@ -81,14 +62,10 @@ class TableModel(QAbstractTableModel):
             return ""
         if section == 1:
             return "#"
-        return headers[section - 2]
+        return headers[section - 2].name
 
     def setData(self, index: QModelIndex, value: Any, role: int = Qt.ItemDataRole.EditRole):  # noqa: N802
         if role == Qt.ItemDataRole.EditRole:
-            try:
-                value = int(value)
-            except ValueError:
-                return False
             self._data[index.row()][index.column() - 2] = value
             return True
 
@@ -107,4 +84,13 @@ class TableModel(QAbstractTableModel):
         if index.column() == 0:
             return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable
 
-        return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable
+        if index.column() == 1:
+            return Qt.ItemFlag.ItemIsEnabled
+
+        flag = Qt.ItemFlag.ItemIsSelectable
+
+        if index.column() > 1 and headers[index.column() - 2].edit:
+            flag |= Qt.ItemFlag.ItemIsEditable
+            flag |= Qt.ItemFlag.ItemIsEnabled
+
+        return flag
