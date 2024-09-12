@@ -15,7 +15,7 @@ from src.utils.config import AppConfig
 
 
 def get_main_order_template() -> OrderTemplate:  # TODO: implement compare and edit events by some changes from xlsx file
-    main_order_template_path = Path(AppConfig.get_resource_path("orders/main_template"))
+    main_order_template_path = Path(AppConfig.get_order_path("orders/main_template"))
 
     order_templates_paths = [str(file) for file in main_order_template_path.glob("*.xlsx")]
 
@@ -254,7 +254,7 @@ def check_mandatory_sheets(sheets_titles: list[str]) -> None:
 
 
 def get_order_templates_paths(start_date: date, end_date: date) -> list[str]:
-    order_templates_path = Path(AppConfig.get_resource_path("orders/order_templates"))
+    order_templates_path = Path(AppConfig.get_order_path("orders/order_templates"))
     # take files, that were last modified in this period
     files = []
     for file in order_templates_path.glob("*.xlsx"):
