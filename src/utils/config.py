@@ -36,6 +36,6 @@ class AppConfig:
         :param relative_path: Relative path to the resource.
         :return: Absolute path to the resource.
         """
-        base_path = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
+        base_path = Path(getattr(sys, "_MEIPASS", cls.PROJECT_ROOT))
 
         return str(base_path / relative_path)

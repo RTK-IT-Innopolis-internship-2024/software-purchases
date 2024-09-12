@@ -46,9 +46,9 @@ class MainWindow(QMainWindow):
 
         self.bottombar.add_separator()
 
-        self.bottombar.add_button("Загрузить данные", "resources/assets/icons/windows/shell32-276.ico", self.load_document)
-        self.bottombar.add_button("Экспорт данных", "resources/assets/icons/windows/shell32-265.ico", self.export_data)
-        self.bottombar.add_button("Настройки", "resources/assets/icons/windows/shell32-315.ico", self.settings_window)
+        self.bottombar.add_button("Загрузить данные", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-276.ico"), self.load_document)
+        self.bottombar.add_button("Экспорт данных", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-265.ico"), self.export_data)
+        self.bottombar.add_button("Настройки", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-315.ico"), self.settings_window)
 
         self.addToolBar(Qt.ToolBarArea.BottomToolBarArea, self.bottombar)
 
