@@ -45,7 +45,7 @@ jobs:
         run: uv run yamlfix .
       - name: Build application with PyInstaller
         run: uv run pyinstaller main.py --onefile --name "Apps-Purchases-${{ matrix.os }}"
-          --distpath dist/${{ matrix.os }}
+          --distpath dist/${{ matrix.os }} --add-data "resources:resources"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

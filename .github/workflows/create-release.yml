@@ -48,19 +48,30 @@ jobs:
           && sudo apt install gh -y
       - name: Download Windows App
         run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-windows-latest
-          --dir ./dist/windows-latest
+          --dir ./dist/Apps-Purchases-windows-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Download Linux App
         run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-ubuntu-latest
-          --dir ./dist/ubuntu-latest
+          --dir ./dist/Apps-Purchases-ubuntu-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Download macOS App
         run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-macos-latest
-          --dir ./dist/macos-latest
+          --dir ./dist/Apps-Purchases-macos-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
+      - name: Copy orders directory
+        run: |
+          cp -r ./orders ./dist/Apps-Purchases-windows-latest/
+          cp -r ./orders ./dist/Apps-Purchases-ubuntu-latest/
+          cp -r ./orders ./dist/Apps-Purchases-macos-latest/
+      - name: Create Archives
+        run: |
+          cd ./dist
+          zip -r Apps-Purchases-windows-latest.zip Apps-Purchases-windows-latest
+          zip -r Apps-Purchases-ubuntu-latest.zip Apps-Purchases-ubuntu-latest
+          zip -r Apps-Purchases-macos-latest.zip Apps-Purchases-macos-latest
       - name: Set current date
         id: set_current_date
         run: echo "current_date=$(date +v%Y.%m.%d.%H.%M.%S)" >> $GITHUB_ENV
@@ -75,11 +86,7 @@ jobs:
           body: ${{ needs.find_some_body.outputs.final_release_body }}
           draft: false
           prerelease: false
-          files: |
-            ./dist/windows-latest/Apps-Purchases-windows-latest.exe
-            ./dist/macos-latest/Apps-Purchases-macos-latest
-            ./dist/ubuntu-latest/Apps-Purchases-ubuntu-latest
-      - name: List files in dist directory
-        run: |-
-          echo "Listing all files in the dist directory:"
-          find ./dist -type f
+          files: |-
+            ./dist/Apps-Purchases-windows-latest.zip
+            ./dist/Apps-Purchases-ubuntu-latest.zip
+            ./dist/Apps-Purchases-macos-latest.zip
