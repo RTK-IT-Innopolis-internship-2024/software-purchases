@@ -8,8 +8,10 @@ from src.backend.objects.country import Country
 from src.backend.objects.license_type import LicenseType
 from src.backend.objects.order import Order
 from src.backend.objects.order_template import OrderTemplate
+from src.backend.objects.quarter import Quarter
 from src.backend.objects.software import Software
 from src.backend.objects.software_class import SoftwareClass
+from src.backend.objects.software_class_section import SoftwareClassSection
 from src.backend.objects.supervisor import Supervisor
 from src.utils.config import AppConfig
 
@@ -30,19 +32,6 @@ def get_main_order_template() -> OrderTemplate:  # TODO: implement compare and e
     order_template_file_path = order_templates_paths[0]
 
     return get_order_template(order_template_file_path)
-
-
-def parse_quarter(quarter: str) -> int:
-    if quarter == "1 квартал":
-        return 1
-    if quarter == "2 квартал":
-        return 2
-    if quarter == "3 квартал":
-        return 3
-    if quarter == "4 квартал":
-        return 4
-    error_message = f"Invalid quarter: {quarter}"
-    raise ValueError(error_message)
 
 
 def get_order_template(order_template_file_path: str) -> OrderTemplate:
@@ -98,17 +87,38 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
         raise ValueError(error_message)
     software_classes = []
     for row in sheets_data["Классификатор Минкомсвязи"][3:]:
-        if row[2] is not None:
-            software_class_point = str(row[1]) if row[1] is not None else None
-            software_class_name = str(row[2])
-            software_class_target_indicator_name = str(row[3]) if row[3] is not None else None
-            software_class_target_indicator_value = float(row[4]) if row[4] is not None else None
+        if row[1] is None and row[2] is None and row[3] is None and row[4] is None and row[5] is None and row[6] is None:
+            software_class_section = SoftwareClassSection(name=str(row[0]))
+        else:
+            software_class_point = str(row[0])
+            software_class_name = str(row[1])
+            if row[2] != "-":
+                target_indicator_name = str(row[2])
+
+                # Is None checking
+                target_indicator_current_year_first_half = row[3]
+                target_indicator_current_year_second_half = row[4] or target_indicator_current_year_first_half
+                target_indicator_next_year_first_half = row[5] or target_indicator_current_year_second_half
+                target_indicator_next_year_second_half = row[6] or target_indicator_next_year_first_half
+
+            else:
+                target_indicator_name = None
+
+                target_indicator_current_year_first_half = None
+                target_indicator_current_year_second_half = None
+                target_indicator_next_year_first_half = None
+                target_indicator_next_year_second_half = None
+
             software_classes.append(
                 SoftwareClass(
+                    class_section=software_class_section,
                     class_point=software_class_point,
                     class_name=software_class_name,
-                    target_indicator_name=software_class_target_indicator_name,
-                    target_indicator_value=software_class_target_indicator_value,
+                    target_indicator_name=target_indicator_name,
+                    target_indicator_current_year_first_half=target_indicator_current_year_first_half,
+                    target_indicator_current_year_second_half=target_indicator_current_year_second_half,
+                    target_indicator_next_year_first_half=target_indicator_next_year_first_half,
+                    target_indicator_next_year_second_half=target_indicator_next_year_second_half,
                 )
             )
     software_list = []
@@ -126,7 +136,7 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
             except NameError:
                 software_country = row[2]
 
-            for software_class in software_classes:
+            for software_class in software_classes:  # TODO: change compare process with row[5] by point
                 if software_class.__str__ == row[5]:
                     software_software_class = software_class
                     break
@@ -171,7 +181,7 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
     for row in sheets_data["Заявки"][3:]:
         if row[3] is not None:
             order_year = int(row[1])
-            order_quarter = parse_quarter(row[2])
+            order_quarter = Quarter(row[2].lower())
             order_supervisor_name = str(row[3])
             if order_supervisor_name not in supervisors_map:
                 error_message = f"Supervisor '{order_supervisor_name}' not found in the 'ФИО Руководителя' sheet."
@@ -244,8 +254,9 @@ def check_mandatory_sheets(sheets_titles: list[str]) -> None:
         "Наименование ПО",
         "Страны",
         "ФИО Руководителя",
-        "тип лицензии",
         "Наименование проекта",
+        "тип лицензии",
+        "квартал",
     ]
     missing_sheets = [title for title in mandatory_sheet_titles if title not in sheets_titles]
     if missing_sheets:
@@ -259,7 +270,7 @@ def get_order_templates_paths(start_date: date, end_date: date) -> list[str]:
     files = []
     for file in order_templates_path.glob("*.xlsx"):
         file_date = datetime.fromtimestamp(file.stat().st_mtime, tz=UTC).date()
-        if file_date >= start_date and file_date <= end_date:
+        if start_date <= file_date <= end_date:
             files.append(str(file))
 
     return files

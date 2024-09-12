@@ -2,6 +2,7 @@ from datetime import date
 
 from src.backend.objects.company import Company
 from src.backend.objects.license_type import LicenseType
+from src.backend.objects.quarter import Quarter
 from src.backend.objects.software import Software
 from src.backend.objects.supervisor import Supervisor
 
@@ -10,7 +11,7 @@ class Order:
     def __init__(
         self,
         year: int,
-        quarter: int,
+        quarter: Quarter,
         supervisor: Supervisor,
         software: Software,
         employee_name: str,
