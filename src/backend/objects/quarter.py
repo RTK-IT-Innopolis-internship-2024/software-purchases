@@ -8,6 +8,9 @@ class Quarter:
         self.name = name
         self.number = self._get_number_from_name(name)
 
+    def __eq__(self, other):
+        return self.name == other.name and self.number == other.number
+
     @classmethod
     def _get_number_from_name(cls, name: str) -> int:
         """

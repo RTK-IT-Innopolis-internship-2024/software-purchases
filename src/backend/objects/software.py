@@ -6,14 +6,14 @@ from src.backend.objects.software_class import SoftwareClass
 class Software:
     def __init__(
         self,
-        country: Country | str,
-        software_class: SoftwareClass | str,
+        country: Country,
+        company: Company,
+        software_class: SoftwareClass,
         name: str,
         maker_name: str | None,
         website: str | None,
         purpose: str | None,
         software_analogs: str | None,
-        company: Company | str | None,
         registry_link: str | None,
         *,
         is_in_registry: bool,
@@ -28,3 +28,19 @@ class Software:
         self.company = company
         self.is_in_registry = is_in_registry
         self.registry_link = registry_link
+
+    def __eq__(self, other):
+        return all(
+            [
+                self.country == other.country,
+                self.software_class == other.software_class,
+                self.name == other.name,
+                self.maker_name == other.maker_name,
+                self.website == other.website,
+                self.purpose == other.purpose,
+                self.software_analogs == other.software_analogs,
+                self.company == other.company,
+                self.registry_link == other.registry_link,
+                self.is_in_registry == other.is_in_registry,
+            ]
+        )

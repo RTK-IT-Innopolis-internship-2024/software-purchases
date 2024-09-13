@@ -12,20 +12,18 @@ class Order:
         self,
         year: int,
         quarter: Quarter,
-        supervisor: Supervisor,
         software: Software,
+        supervisor: Supervisor,
+        company_which_will_use: Company,
         employee_name: str,
-        tariff_plan: str,
+        tariff_plan: str | None,
         login_and_password: str | None,
         number_license: int,
         price_for_one: float,
         licenses_period: date | None,
         license_type: LicenseType,
         useful_life: str,
-        company_which_will_use: Company,
         is_new_license: bool,
-        is_registered: bool,
-        is_analog_in_registry: bool,
     ):
         self.year = year
         self.quarter = quarter
@@ -40,6 +38,24 @@ class Order:
         self.licenses_period = licenses_period
         self.license_type = license_type
         self.useful_life = useful_life
-        self.is_registered = is_registered
-        self.is_analog_in_registry = is_analog_in_registry
         self.company_which_will_use = company_which_will_use
+
+    def __eq__(self, other):
+        return all(
+            [
+                self.year == other.year,
+                self.quarter == other.quarter,
+                self.supervisor == other.supervisor,
+                self.software == other.software,
+                self.employee_name == other.employee_name,
+                self.tariff_plan == other.tariff_plan,
+                self.login_and_password == other.login_and_password,
+                self.number_license == other.number_license,
+                self.is_new_license == other.is_new_license,
+                self.price_for_one == other.price_for_one,
+                self.licenses_period == other.licenses_period,
+                self.license_type == other.license_type,
+                self.useful_life == other.useful_life,
+                self.company_which_will_use == other.company_which_will_use,
+            ]
+        )

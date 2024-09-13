@@ -1,3 +1,4 @@
+import re
 from datetime import UTC, date, datetime
 from pathlib import Path
 
@@ -44,10 +45,13 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
         sheets_data[sheet.title] = sheet_data
     check_mandatory_sheets(sheets_titles)
     countries = []
+    countries_map = {}
     for row in sheets_data["Страны"][1:]:
         if row[0] is not None:
             country_name = str(row[0])
-            countries.append(Country(name=country_name))
+            country = Country(name=country_name)
+            countries.append(country)
+            countries_map[country.name] = country
     if len(countries) == 0:
         error_message = "No valid country data found in the 'Страны' sheet."
         raise ValueError(error_message)
@@ -71,9 +75,6 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
             supervisor = Supervisor(name=supervisor_name, email=supervisor_email)
             supervisors.append(supervisor)
             supervisors_map[supervisor_name] = supervisor
-    if len(supervisors) == 0:
-        error_message = "No valid supervisor data found in the 'ФИО Руководителя' sheet."
-        raise ValueError(error_message)
     licenses_types = []
     licenses_types_map = {}
     for row in sheets_data["тип лицензии"][1:]:
@@ -82,10 +83,32 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
             license_type = LicenseType(name=license_type_name)
             licenses_types.append(license_type)
             licenses_types_map[license_type_name] = license_type
-    if len(licenses_types) == 0:
-        error_message = "No valid license type data found in the 'тип лицензии' sheet."
-        raise ValueError(error_message)
     software_classes = []
+    software_classes_map = {}
+    software_class_section = SoftwareClassSection(name="Дополнительные")
+    for row in sheets_data["Дополнительный классификатор"][1:]:
+        if row[0] is not None:
+            software_class_point = None
+            software_class_name = row[0]
+            target_indicator_name = None
+            target_indicator_current_year_first_half = None
+            target_indicator_current_year_second_half = None
+            target_indicator_next_year_first_half = None
+            target_indicator_next_year_second_half = None
+
+            software_class = SoftwareClass(
+                class_section=software_class_section,
+                class_point=software_class_point,
+                class_name=software_class_name,
+                target_indicator_name=target_indicator_name,
+                target_indicator_current_year_first_half=target_indicator_current_year_first_half,
+                target_indicator_current_year_second_half=target_indicator_current_year_second_half,
+                target_indicator_next_year_first_half=target_indicator_next_year_first_half,
+                target_indicator_next_year_second_half=target_indicator_next_year_second_half,
+            )
+            software_classes.append(software_class)
+            software_classes_map[software_class.class_name] = software_class
+
     for row in sheets_data["Классификатор Минкомсвязи"][3:]:
         if row[1] is None and row[2] is None and row[3] is None and row[4] is None and row[5] is None and row[6] is None:
             software_class_section = SoftwareClassSection(name=str(row[0]))
@@ -127,39 +150,21 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
         if row[0] is not None:
             software_name = str(row[0])
             software_maker_name = str(row[1]) if row[1] is not None else None
-            for country in countries:
-                if country.name == row[2]:
-                    software_country = country
-                    break
-            try:
-                software_country
-            except NameError:
-                software_country = row[2]
+            software_country = countries_map[row[2]]
+            if row[5] in software_classes_map:
+                software_software_class = software_classes_map[row[5]]
+            else:
+                for software_class in software_classes:
+                    if re.match(r"\d{1,2}\.\d{1,2}", row[5][0:4]) and row[5][0:4] == software_class.class_name[0:4]:
+                        software_software_class = software_class
+                        break
 
-            for software_class in software_classes:  # TODO: change compare process with row[5] by point
-                if software_class.__str__ == row[5]:
-                    software_software_class = software_class
-                    break
-            try:
-                software_software_class
-            except NameError:
-                software_software_class = row[5]
             software_website = str(row[3]) if row[3] is not None else None
             software_purpose = str(row[4]) if row[4] is not None else None
             software_software_analogs = str(row[6]) if row[6] is not None else None
-            if row[7] is not None:
-                for company in companies:
-                    if company.name == row[7]:
-                        software_company = company
-                        break
-                try:
-                    software_company
-                except NameError:
-                    software_company = row[7]
-            else:
-                software_company = None
+            software_company = companies_map[row[7]]
             software_registry_link = str(row[9]) if row[9] is not None else None
-            software_is_in_registry = row[8] in ["да", "Да", "ДА"]
+            software_is_in_registry = True if software_registry_link else (row[8].lower() == "да" if row[8] is not None else False)
             software = Software(
                 country=software_country,
                 software_class=software_software_class,
@@ -174,46 +179,23 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
             )
             software_list.append(software)
             software_list_map[software_name] = software
-    if len(software_list) == 0:
-        error_message = "No valid software data found in the 'Наименование ПО' sheet."
-        raise ValueError(error_message)
     order_list = []
     for row in sheets_data["Заявки"][3:]:
         if row[3] is not None:
             order_year = int(row[1])
             order_quarter = Quarter(row[2].lower())
-            order_supervisor_name = str(row[3])
-            if order_supervisor_name not in supervisors_map:
-                error_message = f"Supervisor '{order_supervisor_name}' not found in the 'ФИО Руководителя' sheet."
-                raise ValueError(error_message)
-            order_supervisor = supervisors_map[order_supervisor_name]
+            order_supervisor = supervisors_map[str(row[3])]
             order_employee_name = str(row[4])
-            order_software_name = str(row[5])
-            if order_software_name not in software_list_map:
-                error_message = f"Software '{order_software_name}' not found in the 'Наименование ПО' sheet."
-                raise ValueError(error_message)
-            order_software = software_list_map[order_software_name]
-            order_tariff_plan = str(row[7])
+            order_software = software_list_map[str(row[5])]
+            order_tariff_plan = str(row[7]) if row[7] is not None else None
             order_login_and_password = str(row[8]) if row[8] is not None else None
             order_number_license = int(row[10])
-            order_is_new_license = row[11] in ["новая", "Новая", "НОВАЯ"]
+            order_is_new_license = row[11].lower() == "новая"
             order_price_for_one = float(row[12])
-            order_licenses_period = row[14] if row[14] is not None else None
-            if order_licenses_period is not None:
-                order_licenses_period = order_licenses_period.date()
-            order_license_type_name = str(row[15])
-            if order_license_type_name not in licenses_types_map:
-                error_message = f"License type '{order_license_type_name}' not found in the 'Тип лицензии' sheet."
-                raise ValueError(error_message)
-            order_license_type = licenses_types_map[order_license_type_name]
-            order_useful_life = str(row[16])
-            order_is_registered = row[18] in ["да", "Да", "ДА"]
-            order_is_analog_in_registry = row[19] in ["да", "Да", "ДА"]
-            order_company_which_will_use_name = str(row[20])
-            if order_company_which_will_use_name not in companies_map:
-                error_message = f"Company '{order_company_which_will_use_name}' not found in the 'Наименование проекта' sheet."
-                raise ValueError(error_message)
-            order_company_which_will_use = companies_map[order_company_which_will_use_name]
+            order_licenses_period = row[14].date() if row[14] is not None else None
+            order_license_type = licenses_types_map[str(row[15])]
+            order_useful_life = str(row[16]).lower()
+            order_company_which_will_use = companies_map[str(row[18])]
             order_list.append(
                 Order(
                     year=order_year,
@@ -229,8 +211,6 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
                     licenses_period=order_licenses_period,
                     license_type=order_license_type,
                     useful_life=order_useful_life,
-                    is_registered=order_is_registered,
-                    is_analog_in_registry=order_is_analog_in_registry,
                     company_which_will_use=order_company_which_will_use,
                 )
             )
@@ -251,6 +231,7 @@ def check_mandatory_sheets(sheets_titles: list[str]) -> None:
     mandatory_sheet_titles = [
         "Заявки",
         "Классификатор Минкомсвязи",
+        "Дополнительный классификатор",
         "Наименование ПО",
         "Страны",
         "ФИО Руководителя",

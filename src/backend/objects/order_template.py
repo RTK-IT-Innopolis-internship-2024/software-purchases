@@ -27,3 +27,17 @@ class OrderTemplate:
         self.software_classes = software_classes
         self.software_list = software_list
         self.order_list = order_list
+
+    def __eq__(self, other):
+        return all(
+            [
+                self.file_path == other.file_path,
+                self.companies == other.companies,
+                self.countries == other.countries,
+                self.supervisors == other.supervisors,
+                self.license_type == other.license_type,
+                self.software_classes == other.software_classes,
+                self.software_list == other.software_list,
+                self.order_list == other.order_list,
+            ]
+        )
