@@ -10,6 +10,7 @@ class AppConfig:
     APP_NAME: str = "БФТ Закупки"
 
     PROJECT_ROOT: Path = Path(sys.argv[0]).resolve().parent
+    FONT_SIZE: int = 12
 
     @classmethod
     def initialize(cls) -> None:

@@ -1,16 +1,11 @@
-from datetime import date
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QMainWindow, QTabWidget, QVBoxLayout, QWidget
 
-from PyQt6.QtCore import QDate, Qt
-from PyQt6.QtWidgets import QHBoxLayout, QHeaderView, QMainWindow, QTableView, QVBoxLayout, QWidget
-
-from src.backend.controllers import order_template_controller
-from src.ui.models.order_template_view import OrderTemplateView
+from src.ui.widgets.catalog_tab import CatalogsTab
+from src.ui.widgets.data_tab import DataTab
 
 from ..utils.config import AppConfig
-from .widgets.main_table import CenteredCheckboxDelegate, TableModel
-from .widgets.table_bar import TableBar
 from .widgets.toolbar import ToolBar
-from .widgets.treeview import TreeView
 
 
 class MainWindow(QMainWindow):
@@ -24,22 +19,19 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout(central_widget)
         central_widget.setLayout(layout)
 
-        self.table_bar = TableBar()
-        self.table_bar.on_period_changed = self.on_period_changed
-        layout.addWidget(self.table_bar)
+        self.tabs = QTabWidget()
+        self.tabs.setStyleSheet("QTabBar::tab { font-size: 18px; }")
+        layout.addWidget(self.tabs)
 
-        self.treeview = self.create_treeview()
-        self.table = self.create_table()
+        # Add the first tab (DataTab)
+        self.data_tab = DataTab(self)
+        self.tabs.addTab(self.data_tab, "Заявки")
 
-        content_layout = QHBoxLayout()
-        content_layout.addWidget(self.treeview)
-        content_layout.addWidget(self.table, stretch=1)
-
-        layout.addLayout(content_layout)
+        # Add the second tab (CatalogsTab)
+        self.catalogs_tab = CatalogsTab(self)
+        self.tabs.addTab(self.catalogs_tab, "Справочники")
 
         self.create_toolbars()
-        period = self.table_bar.get_period()
-        self.load_data((period[0].toPyDate(), period[1].toPyDate()))
 
     def create_toolbars(self) -> None:
         self.bottombar = ToolBar(self, orientation=Qt.Orientation.Horizontal, style=Qt.ToolButtonStyle.ToolButtonIconOnly, icon_size=(30, 30))
@@ -51,36 +43,6 @@ class MainWindow(QMainWindow):
         self.bottombar.add_button("Настройки", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-315.ico"), self.settings_window)
 
         self.addToolBar(Qt.ToolBarArea.BottomToolBarArea, self.bottombar)
-
-    def create_treeview(self) -> TreeView:
-        return TreeView(self)
-
-    def create_table(self) -> QTableView:
-        return QTableView(self)
-
-    def set_table_model(self) -> None:
-        if self.data is None:
-            return
-        model = TableModel(self.data)
-        self.table.setModel(model)
-        header = self.table.horizontalHeader()
-        if header is not None:
-            header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-        self.table.setColumnWidth(0, 10)
-        self.table.setColumnWidth(1, 10)
-        self.table.setItemDelegateForColumn(0, CenteredCheckboxDelegate(self.table))
-
-    def set_tree_model(self) -> None:
-        pass
-
-    def on_period_changed(self, from_date: QDate, to_date: QDate) -> None:
-        self.load_data((from_date.toPyDate(), to_date.toPyDate()))
-
-    def load_data(self, period: tuple[date, date]) -> None:
-        templates = order_template_controller.get_order_templates_by_period(period[0], period[1])
-        self.data = [OrderTemplateView.from_order_template(template) for template in templates]
-        self.set_table_model()
-        self.set_tree_model()
 
     def settings_window(self) -> None:
         """

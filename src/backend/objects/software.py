@@ -1,4 +1,3 @@
-from src.backend.objects.company import Company
 from src.backend.objects.country import Country
 from src.backend.objects.software_class import SoftwareClass
 
@@ -7,7 +6,7 @@ class Software:
     def __init__(
         self,
         country: Country,
-        company: Company,
+        company: str | None,
         software_class: SoftwareClass,
         name: str,
         maker_name: str | None,

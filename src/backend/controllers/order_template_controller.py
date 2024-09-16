@@ -162,7 +162,7 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
             software_website = str(row[3]) if row[3] is not None else None
             software_purpose = str(row[4]) if row[4] is not None else None
             software_software_analogs = str(row[6]) if row[6] is not None else None
-            software_company = companies_map[row[7]]
+            software_company = str(row[7]) if row[7] is not None else None
             software_registry_link = str(row[9]) if row[9] is not None else None
             software_is_in_registry = True if software_registry_link else (row[8].lower() == "да" if row[8] is not None else False)
             software = Software(

@@ -5,6 +5,7 @@ from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import QStyledItemDelegate
 
 from src.ui.models.order_template_view import OrderTemplateView
+from src.utils.config import AppConfig
 
 from ..models.order_view import headers
 
@@ -55,6 +56,11 @@ class TableModel(QAbstractTableModel):
         return QVariant()
 
     def headerData(self, section: int, orientation: Qt.Orientation, role: int = Qt.ItemDataRole.DisplayRole):  # noqa: N802
+        if role == Qt.ItemDataRole.FontRole:
+            font = QFont()
+            font.setPointSize(AppConfig.FONT_SIZE)  # Increase font size
+            return font
+
         if role != Qt.ItemDataRole.DisplayRole or orientation != Qt.Orientation.Horizontal:
             return QVariant()
 
