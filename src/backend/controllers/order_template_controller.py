@@ -17,24 +17,6 @@ from src.backend.objects.supervisor import Supervisor
 from src.utils.config import AppConfig
 
 
-def get_main_order_template() -> OrderTemplate:  # TODO: implement compare and edit events by some changes from xlsx file
-    main_order_template_path = Path(AppConfig.get_order_path("orders/main_template"))
-
-    order_templates_paths = [str(file) for file in main_order_template_path.glob("*.xlsx")]
-
-    if not order_templates_paths:
-        error_message = "No main order template file found in the specified directory."
-        raise FileNotFoundError(error_message)
-
-    if len(order_templates_paths) != 1:
-        error_message = f"Expected exactly one main order template file, found {len(order_templates_paths)}."
-        raise ValueError(error_message)
-
-    order_template_file_path = order_templates_paths[0]
-
-    return get_order_template(order_template_file_path)
-
-
 def get_order_template(order_template_file_path: str) -> OrderTemplate:
     order_template_workbook = load_workbook(filename=order_template_file_path, data_only=True)
     sheets_data = {}
@@ -243,6 +225,24 @@ def check_mandatory_sheets(sheets_titles: list[str]) -> None:
     if missing_sheets:
         error_message = f"The following mandatory sheets are missing: {', '.join(missing_sheets)}"
         raise ValueError(error_message)
+
+
+def get_main_order_template() -> OrderTemplate:  # TODO: implement compare and edit events by some changes from xlsx file (not relevant)
+    main_order_template_path = Path(AppConfig.get_order_path("orders/main_template"))
+
+    order_templates_paths = [str(file) for file in main_order_template_path.glob("*.xlsx")]
+
+    if not order_templates_paths:
+        error_message = "No main order template file found in the specified directory."
+        raise FileNotFoundError(error_message)
+
+    if len(order_templates_paths) != 1:
+        error_message = f"Expected exactly one main order template file, found {len(order_templates_paths)}."
+        raise ValueError(error_message)
+
+    order_template_file_path = order_templates_paths[0]
+
+    return get_order_template(order_template_file_path)
 
 
 def get_order_templates_paths(start_date: date, end_date: date) -> list[str]:

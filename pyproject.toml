@@ -71,4 +71,7 @@ extend-ignore = [
     "PLR0915", # Too many statements,
     "FBT001", # Found boolean positional arg
     "FBT002", # Found boolean positional arg
+    "W291",
+    "RUF001",
+    "ERA001"
 ]

@@ -1,0 +1,174 @@
+from datetime import date
+from operator import attrgetter
+from pathlib import Path
+
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.utils import get_column_letter
+
+from src.backend.objects.order import Order
+from src.utils.config import AppConfig
+
+
+def create_orders_report_with_sort_by_params(
+    start_date: date, end_date: date, order_list: list[Order] | None, sort_params: dict[str, bool]
+) -> Path | None:
+    if order_list is None:
+        return None
+
+    params = list(sort_params.keys())
+    sort_orders = list(sort_params.values())
+
+    for i in range(len(params) - 1, -1, -1):
+        param = params[i]
+        reverse_order = not sort_orders[i]
+        order_list = sorted(order_list, key=attrgetter(param), reverse=reverse_order)
+
+    formatted_start_date = start_date.strftime("%Y.%m.%d")
+    formatted_end_date = end_date.strftime("%Y.%m.%d")
+
+    folder_path = AppConfig.get_order_path("orders/final_reports")
+    report_name = f"Отчет о заявках за период - ({formatted_start_date}-{formatted_end_date}).xlsx"
+    report_path = Path(f"{folder_path}/{report_name}")
+
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Заявки"
+
+    headers = [
+        "№",
+        "Год",
+        "Квартал",
+        "ФИО руководителя согласовавшего закупку",
+        "ФИО сотрудника, для которого приобретается ПО",
+        "Наименование ПО",
+        "Производитель ПО",
+        "Тарифный план (если несколько вариантов) ",
+        """Логин и пароль
+(если есть уже аккаунт, если нет, то мы сами создадим)""",
+        "Страна производства",
+        "Количество",
+        "Продление/новая",
+        "Цена за единицу, руб, без НДС",
+        "Стоимость, руб, без НДС (за все лицензии)",
+        """Окончание срока действия текущих лицензий 
+(если продление)""",
+        """Лицензия/
+Подписка/
+Техподдержка (ТП)/
+Лицензия+ТП/сертификат, домен""",
+        """Срок полезного использования
+(месяц/
+год/
+бессрочно)""",
+        "Тип ПО по классификатору Минкомсвязи",
+        """Наличие ПО в реестре Российского ПО*
+(да/нет)""",
+        """Наличие аналогов в Реестре Российского ПО 
+(да/нет)""",
+        "Проект в котором будет использоваться ПО",
+        "Ссылка на ПО (лицензии) на сайте производителя",
+        "Альтернативы",
+    ]
+
+    left_right_bold_border = Border(left=Side(style="medium"), right=Side(style="medium"), top=Side(style="thin"), bottom=Side(style="thin"))
+
+    thin_border = Border(left=Side(style="thin"), right=Side(style="thin"), top=Side(style="thin"), bottom=Side(style="thin"))
+
+    default_font = Font(name="Calibri", size=12)
+    header_font = Font(color="FFFFFF", bold=True, name="Calibri", size=12)
+    header_fill = PatternFill(start_color="70ad47", end_color="70ad47", fill_type="solid")
+    header_alignment = Alignment(horizontal="center", vertical="top", wrap_text=True)
+
+    sheet.append(headers)
+    sheet.row_dimensions[1].height = 120
+
+    for col_num, _ in enumerate(headers, 1):
+        cell = sheet.cell(row=1, column=col_num)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_alignment
+        cell.border = left_right_bold_border
+
+    special_fill = PatternFill(start_color="d9d9d9", end_color="d9d9d9", fill_type="solid")
+
+    special_columns = [
+        "Производитель ПО",
+        "Страна производства",
+        "Тип ПО по классификатору Минкомсвязи",
+        "Проект в котором будет использоваться ПО",
+        "Ссылка на ПО (лицензии) на сайте производителя",
+        "Альтернативы",
+    ]
+
+    for header in special_columns:
+        col_idx = headers.index(header) + 1
+        column_letter = get_column_letter(col_idx)
+        for row in sheet[column_letter]:
+            row.fill = special_fill
+            row.border = thin_border
+    column_widths = {
+        "A": 5,  # №
+        "B": 8,  # Год
+        "C": 12,  # Квартал
+        "D": 25,  # ФИО руководителя согласовавшего закупку
+        "E": 25,  # ФИО сотрудника
+        "F": 20,  # Наименование ПО
+        "G": 20,  # Производитель ПО
+        "H": 20,  # Тарифный план
+        "I": 30,  # Логин и пароль
+        "J": 15,  # Страна производства
+        "K": 10,  # Количество
+        "L": 15,  # Продление/новая
+        "M": 20,  # Цена за единицу
+        "N": 25,  # Стоимость за все лицензии
+        "O": 25,  # Окончание срока действия лицензий
+        "P": 35,  # Лицензия/Подписка/Техподдержка
+        "Q": 20,  # Срок полезного использования
+        "R": 30,  # Тип ПО по классификатору
+        "S": 15,  # Наличие ПО в реестре
+        "T": 20,  # Наличие аналогов в реестре
+        "U": 30,  # Проект
+        "V": 30,  # Ссылка на ПО
+        "W": 30,  # Альтернативы
+    }
+
+    for col_letter, width in column_widths.items():
+        sheet.column_dimensions[col_letter].width = width
+
+    for index, order in enumerate(order_list):
+        row = [
+            index + 1,
+            order.year,
+            order.quarter.name,
+            order.supervisor.name,
+            order.employee_name,
+            order.software.name,
+            order.software.maker_name if order.software.maker_name is not None else "",
+            order.tariff_plan if order.tariff_plan is not None else "",
+            order.login_and_password if order.login_and_password is not None else "",
+            order.software.country.name,
+            order.number_license,
+            "Новая" if order.is_new_license else "Продление",
+            order.price_for_one,
+            order.price_for_one * order.number_license,
+            order.licenses_period.strftime("%Y.%m.%d") if order.licenses_period is not None else "",
+            order.license_type.name,
+            order.useful_life,
+            order.software.software_class.class_name,
+            "Да" if order.software.is_in_registry else "Нет",
+            "Да" if order.software.software_analogs is not None else "Нет",
+            order.company_which_will_use.name,
+            order.software.registry_link if order.software.registry_link is not None else "",
+            order.software.software_analogs if order.software.software_analogs is not None else "",
+        ]
+        sheet.append(row)
+
+        for col_num, _ in enumerate(row, 1):
+            cell = sheet.cell(row=index + 2, column=col_num)
+            cell.font = default_font
+            cell.border = thin_border
+
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    workbook.save(report_path)
+    return report_path
