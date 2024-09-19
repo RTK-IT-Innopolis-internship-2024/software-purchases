@@ -1,4 +1,5 @@
 import typing
+from datetime import date
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable
@@ -73,3 +74,6 @@ class TableBar(QWidget):
 
     def get_period(self) -> tuple[QDate, QDate]:
         return self.date_from.date(), self.date_to.date()
+
+    def get_period_dates(self) -> tuple[date, date]:
+        return self.date_from.date().toPyDate(), self.date_to.date().toPyDate()

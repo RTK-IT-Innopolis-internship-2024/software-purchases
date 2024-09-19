@@ -24,3 +24,19 @@ def deep_print(current_obj: Any, max_depth: int = 3, name: str = "init", current
         for o in dir(current_obj):
             if not o.startswith("_"):
                 deep_print(getattr(current_obj, o), max_depth, o, current_level + 1)
+
+
+def date_to_year_quarter(date: date) -> tuple[int, int]:
+    """
+    Function to convert date to tuple of year and quarter.
+
+    Args:
+    ----
+        date (date): Date to convert.
+
+    Returns:
+    -------
+          tuple: Tuple of year and quarter.
+
+    """
+    return (date.year, (date.month - 1) // 3 + 1)

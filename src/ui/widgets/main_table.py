@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Any
 
 from PyQt6.QtCore import QAbstractTableModel, QModelIndex, Qt, QVariant
@@ -17,11 +18,11 @@ class CenteredCheckboxDelegate(QStyledItemDelegate):
 
 
 class TableModel(QAbstractTableModel):
-    def __init__(self, data: list[OrderTemplateView]) -> None:
+    def __init__(self, data: list[OrderTemplateView], period: tuple[date, date]) -> None:
         super().__init__()
         agg_data = []
         for order_template in data:
-            agg_data.extend(order_template.to_array())
+            agg_data.extend(order_template.to_array_in_period(period[0], period[1]))
         self._data = agg_data
 
         self.check_states = [Qt.CheckState.Unchecked] * len(self._data)  # Initialize all checkboxes to "unchecked"

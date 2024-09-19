@@ -1,4 +1,4 @@
-from src.backend.objects.order import Order
+from src.backend.objects.order import Order, has_analogs
 from src.ui.models.column import TableColumn
 from src.ui.models.view_model import ViewModel
 
@@ -26,12 +26,6 @@ headers = [
     TableColumn("Ссылка", edit=False),
     TableColumn("Альтернативы", edit=False),
 ]
-
-
-def has_analogs(software_analogs: str | None) -> bool:
-    if software_analogs is None:
-        return False
-    return not (len(software_analogs) == 0 or software_analogs.lower() == "нет" or software_analogs.lower() == "не требуется")
 
 
 class OrderView(ViewModel):

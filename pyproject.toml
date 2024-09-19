@@ -73,5 +73,6 @@ extend-ignore = [
     "FBT002", # Found boolean positional arg
     "W291",
     "RUF001",
-    "ERA001"
+    "ERA001",
+    "EM102",
 ]

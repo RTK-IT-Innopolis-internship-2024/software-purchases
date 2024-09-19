@@ -7,6 +7,12 @@ from src.backend.objects.software import Software
 from src.backend.objects.supervisor import Supervisor
 
 
+def has_analogs(software_analogs: str | None) -> bool:
+    if software_analogs is None:
+        return False
+    return not (len(software_analogs) == 0 or software_analogs.lower() == "нет" or software_analogs.lower() == "не требуется")
+
+
 class Order:
     def __init__(
         self,

@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 
 from PyQt6.QtCore import Qt
@@ -35,7 +36,7 @@ class TreeView(QTreeWidget):
                 child = item.child(i)
                 child.setCheckState(0, Qt.CheckState.Checked)
 
-    def populate_tree(self, data: list[OrderTemplateView]):
+    def populate_tree(self, data: list[OrderTemplateView], period: tuple[date, date]):
         """Populates the tree with template files and their orders."""
         self.clear()  # Clear any existing items
         for template_view in data:
@@ -50,7 +51,7 @@ class TreeView(QTreeWidget):
             self.addTopLevelItem(top_item)
 
             # Add orders as child items under each template
-            for order in template_view.orders:
+            for order in template_view.orders_in_period(period[0], period[1]):
                 child_item = QTreeWidgetItem(top_item)
                 child_item.setText(0, f"Заявка: {order.employee_name}")  # Customize the display for each order
                 child_item.setCheckState(0, Qt.CheckState.Checked)

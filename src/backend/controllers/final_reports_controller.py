@@ -1,20 +1,96 @@
-from datetime import date
+from collections.abc import Callable
 from operator import attrgetter
-from pathlib import Path
+from typing import TypeVar
 
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
-from src.backend.objects.order import Order
-from src.utils.config import AppConfig
+from src.backend.objects.grouped_order import GroupedOrder
+from src.backend.objects.order import Order, has_analogs
+
+T = TypeVar("T")
 
 
-def create_orders_report_with_sort_by_params(
-    start_date: date, end_date: date, order_list: list[Order] | None, sort_params: dict[str, bool]
-) -> Path | None:
+def group_orders(orders: list[Order]) -> list[GroupedOrder]:
+    """Groups orders into groups based on their supervisor, software, tariff plan and is_new_license."""
+    group_dict: dict[tuple[str, str, str | None, bool], list[Order]] = {}
+
+    for order in orders:
+        key = (order.supervisor.name, order.software.name, order.tariff_plan, order.is_new_license)
+
+        if key not in group_dict:
+            group_dict[key] = []
+
+        group_dict[key].append(order)
+
+    def verify_order_list(getter: Callable[[Order], T], value: T, order_list):
+        return all(getter(order) == value for order in order_list)
+
+    # verify
+    for key, order_list in group_dict.items():
+        first_order = order_list[0]
+        if not verify_order_list(lambda order: order.supervisor.name, key[0], order_list):
+            raise ValueError(f"Supervisor name mismatch for group {key}")
+        if not verify_order_list(lambda order: order.software.name, key[1], order_list):
+            raise ValueError(f"Software name mismatch for group {key}")
+        if not verify_order_list(lambda order: order.tariff_plan, key[2], order_list):
+            raise ValueError(f"Tariff plan mismatch for group {key}")
+        if not verify_order_list(lambda order: order.is_new_license, key[3], order_list):
+            raise ValueError(f"Is new license mismatch for group {key}")
+        if not verify_order_list(lambda order: order.login_and_password, first_order.login_and_password, order_list):
+            raise ValueError(f"Login and password are not the same for all orders in the group {key}")
+        if not verify_order_list(lambda order: order.licenses_period, first_order.licenses_period, order_list):
+            raise ValueError(f"Licenses period are not the same for all orders in the group {key}")
+        if not verify_order_list(lambda order: order.license_type, first_order.license_type, order_list):
+            raise ValueError(f"License type is not the same for all orders in the group {key}")
+        if not verify_order_list(lambda order: order.useful_life, first_order.useful_life, order_list):
+            raise ValueError(f"Useful life is not the same for all orders in the group {key}")
+        if not verify_order_list(lambda order: order.company_which_will_use.name, first_order.company_which_will_use.name, order_list):
+            raise ValueError(f"Project is not the same for all orders in the group {key}")
+        if not verify_order_list(lambda order: order.price_for_one, first_order.price_for_one, order_list):
+            raise ValueError(f"Price for one is not the same for all orders in the group {key}")
+
+    grouped_orders = []
+    for order_list in group_dict.values():
+        supervisor = order_list[0].supervisor
+        software = order_list[0].software
+        tariff_plan = order_list[0].tariff_plan
+        login_and_password = order_list[0].login_and_password
+        number_orders = len(order_list)
+        number_license = sum([order.number_license for order in order_list])
+        price_for_one = order_list[0].price_for_one
+        licenses_period = order_list[0].licenses_period
+        license_type = order_list[0].license_type
+        useful_life = order_list[0].useful_life
+        company_which_will_use = order_list[0].company_which_will_use
+        is_new_license = order_list[0].is_new_license
+
+        grouped_order = GroupedOrder(
+            supervisor=supervisor,
+            software=software,
+            tariff_plan=tariff_plan,
+            login_and_password=login_and_password,
+            number_orders=number_orders,
+            number_license=number_license,
+            price_for_one=price_for_one,
+            licenses_period=licenses_period,
+            license_type=license_type,
+            useful_life=useful_life,
+            is_new_license=is_new_license,
+            company_which_will_use=company_which_will_use,
+        )
+
+        grouped_orders.append(grouped_order)
+
+    return grouped_orders
+
+
+def create_orders_report_with_sort_by_params(order_list: list[Order] | None, sort_params: dict[str, bool]) -> Workbook | None:
     if order_list is None:
         return None
+
+    grouped_orders = group_orders(order_list)
 
     params = list(sort_params.keys())
     sort_orders = list(sort_params.values())
@@ -22,14 +98,7 @@ def create_orders_report_with_sort_by_params(
     for i in range(len(params) - 1, -1, -1):
         param = params[i]
         reverse_order = not sort_orders[i]
-        order_list = sorted(order_list, key=attrgetter(param), reverse=reverse_order)
-
-    formatted_start_date = start_date.strftime("%Y.%m.%d")
-    formatted_end_date = end_date.strftime("%Y.%m.%d")
-
-    folder_path = AppConfig.get_order_path("orders/final_reports")
-    report_name = f"Отчет о заявках за период - ({formatted_start_date}-{formatted_end_date}).xlsx"
-    report_path = Path(f"{folder_path}/{report_name}")
+        grouped_orders = sorted(grouped_orders, key=attrgetter(param), reverse=reverse_order)
 
     workbook = Workbook()
     sheet = workbook.active
@@ -37,17 +106,14 @@ def create_orders_report_with_sort_by_params(
 
     headers = [
         "№",
-        "Год",
-        "Квартал",
         "ФИО руководителя согласовавшего закупку",
-        "ФИО сотрудника, для которого приобретается ПО",
         "Наименование ПО",
         "Производитель ПО",
-        "Тарифный план (если несколько вариантов) ",
+        "Тарифный план (если несколько вариантов)",
         """Логин и пароль
 (если есть уже аккаунт, если нет, то мы сами создадим)""",
         "Страна производства",
-        "Количество",
+        "Общее количество лицензий",
         "Продление/новая",
         "Цена за единицу, руб, без НДС",
         "Стоимость, руб, без НДС (за все лицензии)",
@@ -90,12 +156,16 @@ def create_orders_report_with_sort_by_params(
         cell.alignment = header_alignment
         cell.border = left_right_bold_border
 
-    special_fill = PatternFill(start_color="d9d9d9", end_color="d9d9d9", fill_type="solid")
+    special_fill = PatternFill(start_color="96BD7C", end_color="96BD7C", fill_type="solid")
 
     special_columns = [
         "Производитель ПО",
         "Страна производства",
         "Тип ПО по классификатору Минкомсвязи",
+        """Наличие ПО в реестре Российского ПО*
+(да/нет)""",
+        """Наличие аналогов в Реестре Российского ПО 
+(да/нет)""",
         "Проект в котором будет использоваться ПО",
         "Ссылка на ПО (лицензии) на сайте производителя",
         "Альтернативы",
@@ -109,40 +179,34 @@ def create_orders_report_with_sort_by_params(
             row.border = thin_border
     column_widths = {
         "A": 5,  # №
-        "B": 8,  # Год
-        "C": 12,  # Квартал
-        "D": 25,  # ФИО руководителя согласовавшего закупку
-        "E": 25,  # ФИО сотрудника
-        "F": 20,  # Наименование ПО
-        "G": 20,  # Производитель ПО
-        "H": 20,  # Тарифный план
-        "I": 30,  # Логин и пароль
-        "J": 15,  # Страна производства
-        "K": 10,  # Количество
-        "L": 15,  # Продление/новая
-        "M": 20,  # Цена за единицу
-        "N": 25,  # Стоимость за все лицензии
-        "O": 25,  # Окончание срока действия лицензий
-        "P": 35,  # Лицензия/Подписка/Техподдержка
-        "Q": 20,  # Срок полезного использования
-        "R": 30,  # Тип ПО по классификатору
-        "S": 15,  # Наличие ПО в реестре
-        "T": 20,  # Наличие аналогов в реестре
-        "U": 30,  # Проект
-        "V": 30,  # Ссылка на ПО
-        "W": 30,  # Альтернативы
+        "B": 25,  # ФИО руководителя согласовавшего закупку
+        "C": 20,  # Наименование ПО
+        "D": 20,  # Производитель ПО
+        "E": 20,  # Тарифный план
+        "F": 30,  # Логин и пароль
+        "G": 15,  # Страна производства
+        "H": 10,  # Общее количество лицензий
+        "I": 15,  # Продление/новая
+        "J": 20,  # Цена за единицу
+        "K": 25,  # Стоимость за все лицензии
+        "L": 25,  # Окончание срока действия лицензий
+        "M": 35,  # Лицензия/Подписка/Техподдержка
+        "N": 20,  # Срок полезного использования
+        "O": 30,  # Тип ПО по классификатору
+        "P": 15,  # Наличие ПО в реестре
+        "Q": 20,  # Наличие аналогов в реестре
+        "R": 30,  # Проект
+        "S": 30,  # Ссылка на ПО
+        "T": 30,  # Альтернативы
     }
 
     for col_letter, width in column_widths.items():
         sheet.column_dimensions[col_letter].width = width
 
-    for index, order in enumerate(order_list):
+    for index, order in enumerate(grouped_orders):
         row = [
             index + 1,
-            order.year,
-            order.quarter.name,
             order.supervisor.name,
-            order.employee_name,
             order.software.name,
             order.software.maker_name if order.software.maker_name is not None else "",
             order.tariff_plan if order.tariff_plan is not None else "",
@@ -157,9 +221,9 @@ def create_orders_report_with_sort_by_params(
             order.useful_life,
             order.software.software_class.class_name,
             "Да" if order.software.is_in_registry else "Нет",
-            "Да" if order.software.software_analogs is not None else "Нет",
+            "Да" if has_analogs(order.software.software_analogs) else "Нет",
             order.company_which_will_use.name,
-            order.software.registry_link if order.software.registry_link is not None else "",
+            order.software.website if order.software.website is not None else "",
             order.software.software_analogs if order.software.software_analogs is not None else "",
         ]
         sheet.append(row)
@@ -169,6 +233,4 @@ def create_orders_report_with_sort_by_params(
             cell.font = default_font
             cell.border = thin_border
 
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    workbook.save(report_path)
-    return report_path
+    return workbook

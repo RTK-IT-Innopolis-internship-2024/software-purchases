@@ -257,6 +257,13 @@ def get_order_templates_paths(start_date: date, end_date: date) -> list[str]:
     return files
 
 
+def get_all_order_templates() -> list[OrderTemplate]:
+    order_templates_path = Path(AppConfig.get_order_path("orders/order_templates"))
+    order_templates_paths = [str(file) for file in order_templates_path.glob("*.xlsx")]
+
+    return [get_order_template(order_template_path) for order_template_path in order_templates_paths]
+
+
 def get_order_templates_by_period(start_date: date, end_date: date) -> list[OrderTemplate]:
     order_templates_paths = get_order_templates_paths(start_date, end_date)
 
