@@ -21,7 +21,8 @@ def run() -> int:
     Initializes the application and runs it.
     """
     # set env variable QT_QPA_PLATFORM
-    os.environ["QT_QPA_PLATFORM"] = "windows:darkmode=0"
+    if os.name == "nt":
+        os.environ["QT_QPA_PLATFORM"] = "windows:darkmode=0"
     signal.signal(signal.SIGINT, sigint_handler)
     app: QApplication = QApplication(sys.argv)
     timer = QTimer()
