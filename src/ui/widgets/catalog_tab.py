@@ -135,3 +135,7 @@ class CatalogsTab(QWidget):
                 "::section { background-color: #f0f0f0; border-width: 1px; border-style: solid; border-color: #b0b0b0 #b0b0b0 #b0b0b0 #f0f0f0; }"
                 "::section::first { background-color: #f0f0f0; border-width: 1px; border-style: solid; border-color: #b0b0b0 #b0b0b0 #b0b0b0 #b0b0b0; }"
             )
+
+        vertical_header = self.catalog_table.verticalHeader()
+        if vertical_header is not None:
+            vertical_header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
