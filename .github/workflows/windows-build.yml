@@ -39,5 +39,5 @@ jobs:
           path: dist/windows/Apps-Purchases*
       - name: Minimize uv cache
         run: uv cache prune --ci
-      - name: Create status badge
-        run: echo "!Windows Build" > README.md
+#      - name: Create status badge
+#        run: echo "!Windows Build" > README.md
