@@ -1,6 +1,6 @@
-![windows](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/windows-build.yml/badge.svg?branch=main)
-![ubuntu](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/ubuntu-build.yml/badge.svg?branch=main)
-![macos](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/macos-build.yml/badge.svg?branch=main)
+!Windows Build
+!Ubuntu Build
+!macOS Build
 
 ### Инструкция для пользователя:
 
