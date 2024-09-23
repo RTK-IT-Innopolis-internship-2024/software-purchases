@@ -1,3 +1,4 @@
+import calendar
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -40,3 +41,23 @@ def date_to_year_quarter(date: date) -> tuple[int, int]:
 
     """
     return (date.year, (date.month - 1) // 3 + 1)
+
+
+def quarter_to_date_range(year: int, quarter: int) -> tuple[date, date]:
+    """
+    Function to convert year and quarter to tuple of date range.
+
+    Args:
+    ----
+        year (int): Year to convert.
+        quarter (int): Quarter to convert.
+
+    Returns:
+    -------
+          tuple: Tuple of date range.
+
+    """
+    return (
+        date(year, (quarter - 1) * 3 + 1, 1),
+        date(year, quarter * 3, calendar.monthrange(year, quarter * 3)[1]),
+    )

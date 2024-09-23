@@ -79,6 +79,27 @@ class OrderView(ViewModel):
         self.link = link
         self.alternatives = alternatives
 
+    def get_key(self) -> tuple:
+        return (
+            self.year,
+            self.quarter,
+            self.supervisor_name,
+            self.employee_name,
+            self.software_name,
+            self.tariff_plan,
+            self.login_and_password,
+            self.country,
+            self.licenses_period,
+            self.license_type,
+            self.useful_life,
+            self.is_new_license,
+            self.is_registered,
+            self.is_analog_in_registry,
+            self.project,
+            self.link,
+            self.alternatives,
+        )
+
     @staticmethod
     def get_headers() -> list:
         return headers

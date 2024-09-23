@@ -14,10 +14,21 @@ T = TypeVar("T")
 
 def group_orders(orders: list[Order]) -> list[GroupedOrder]:
     """Groups orders into groups based on their supervisor, software, tariff plan and is_new_license."""
-    group_dict: dict[tuple[str, str, str | None, bool], list[Order]] = {}
+    group_dict: dict = {}
 
     for order in orders:
-        key = (order.supervisor.name, order.software.name, order.tariff_plan, order.is_new_license)
+        key = (
+            order.supervisor.name,
+            order.software.name,
+            order.tariff_plan,
+            order.is_new_license,
+            order.login_and_password,
+            order.licenses_period,
+            order.license_type.name,
+            order.useful_life,
+            order.company_which_will_use.name,
+            order.price_for_one,
+        )
 
         if key not in group_dict:
             group_dict[key] = []
@@ -42,7 +53,7 @@ def group_orders(orders: list[Order]) -> list[GroupedOrder]:
             raise ValueError(f"Login and password are not the same for all orders in the group {key}")
         if not verify_order_list(lambda order: order.licenses_period, first_order.licenses_period, order_list):
             raise ValueError(f"Licenses period are not the same for all orders in the group {key}")
-        if not verify_order_list(lambda order: order.license_type, first_order.license_type, order_list):
+        if not verify_order_list(lambda order: order.license_type.name, first_order.license_type.name, order_list):
             raise ValueError(f"License type is not the same for all orders in the group {key}")
         if not verify_order_list(lambda order: order.useful_life, first_order.useful_life, order_list):
             raise ValueError(f"Useful life is not the same for all orders in the group {key}")
@@ -54,6 +65,7 @@ def group_orders(orders: list[Order]) -> list[GroupedOrder]:
     grouped_orders = []
     for order_list in group_dict.values():
         supervisor = order_list[0].supervisor
+        employee_names = ", ".join([order.employee_name for order in order_list])
         software = order_list[0].software
         tariff_plan = order_list[0].tariff_plan
         login_and_password = order_list[0].login_and_password
@@ -68,6 +80,7 @@ def group_orders(orders: list[Order]) -> list[GroupedOrder]:
 
         grouped_order = GroupedOrder(
             supervisor=supervisor,
+            employee_names=employee_names,
             software=software,
             tariff_plan=tariff_plan,
             login_and_password=login_and_password,
@@ -107,6 +120,7 @@ def create_orders_report_with_sort_by_params(order_list: list[Order] | None, sor
     headers = [
         "№",
         "ФИО руководителя согласовавшего закупку",
+        "ФИО сотрудников, для которых приобретается ПО",
         "Наименование ПО",
         "Производитель ПО",
         "Тарифный план (если несколько вариантов)",
@@ -180,24 +194,25 @@ def create_orders_report_with_sort_by_params(order_list: list[Order] | None, sor
     column_widths = {
         "A": 5,  # №
         "B": 25,  # ФИО руководителя согласовавшего закупку
-        "C": 20,  # Наименование ПО
-        "D": 20,  # Производитель ПО
-        "E": 20,  # Тарифный план
-        "F": 30,  # Логин и пароль
-        "G": 15,  # Страна производства
-        "H": 10,  # Общее количество лицензий
-        "I": 15,  # Продление/новая
-        "J": 20,  # Цена за единицу
-        "K": 25,  # Стоимость за все лицензии
-        "L": 25,  # Окончание срока действия лицензий
-        "M": 35,  # Лицензия/Подписка/Техподдержка
-        "N": 20,  # Срок полезного использования
-        "O": 30,  # Тип ПО по классификатору
-        "P": 15,  # Наличие ПО в реестре
-        "Q": 20,  # Наличие аналогов в реестре
-        "R": 30,  # Проект
-        "S": 30,  # Ссылка на ПО
-        "T": 30,  # Альтернативы
+        "C": 25,  # ФИО сотрудников, для которых приобретается ПО
+        "D": 20,  # Наименование ПО
+        "E": 20,  # Производитель ПО
+        "F": 20,  # Тарифный план
+        "G": 30,  # Логин и пароль
+        "H": 15,  # Страна производства
+        "I": 10,  # Общее количество лицензий
+        "J": 15,  # Продление/новая
+        "K": 20,  # Цена за единицу
+        "L": 25,  # Стоимость за все лицензии
+        "M": 25,  # Окончание срока действия лицензий
+        "N": 35,  # Лицензия/Подписка/Техподдержка
+        "O": 20,  # Срок полезного использования
+        "P": 30,  # Тип ПО по классификатору
+        "Q": 15,  # Наличие ПО в реестре
+        "R": 20,  # Наличие аналогов в реестре
+        "S": 30,  # Проект
+        "T": 30,  # Ссылка на ПО
+        "U": 30,  # Альтернативы
     }
 
     for col_letter, width in column_widths.items():
@@ -207,6 +222,7 @@ def create_orders_report_with_sort_by_params(order_list: list[Order] | None, sor
         row = [
             index + 1,
             order.supervisor.name,
+            order.employee_names,
             order.software.name,
             order.software.maker_name if order.software.maker_name is not None else "",
             order.tariff_plan if order.tariff_plan is not None else "",

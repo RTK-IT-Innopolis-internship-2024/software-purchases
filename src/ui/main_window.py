@@ -1,11 +1,13 @@
+import shutil
 from pathlib import Path
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QFileDialog, QMainWindow, QMessageBox, QTabWidget, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QFileDialog, QHBoxLayout, QMainWindow, QMessageBox, QTabWidget, QVBoxLayout, QWidget
 
 from src.backend.controllers import final_reports_controller
 from src.ui.widgets.catalog_tab import CatalogsTab
 from src.ui.widgets.data_tab import DataTab
+from src.ui.widgets.status_bar import StatusBar
 from src.utils import utils
 
 from ..utils.config import AppConfig
@@ -18,6 +20,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(AppConfig.APP_NAME)
         self.setGeometry(200, 200, 1200, 900)
         central_widget = QWidget(self)
+        self.status_bar = StatusBar(self)
         self.setCentralWidget(central_widget)
 
         layout = QVBoxLayout(central_widget)
@@ -28,25 +31,40 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.tabs)
 
         # Add the first tab (DataTab)
-        self.data_tab = DataTab(self)
+        self.data_tab = DataTab(self.status_bar, self)
         self.tabs.addTab(self.data_tab, "Заявки")
 
         # Add the second tab (CatalogsTab)
         self.catalogs_tab = CatalogsTab(self)
         self.tabs.addTab(self.catalogs_tab, "Справочники")
 
-        self.create_toolbars()
+        self.create_bottom_layout(layout)
 
-    def create_toolbars(self) -> None:
+    def initialize(self) -> None:
+        self.data_tab.initialize()
+        self.catalogs_tab.initialize()
+
+    def create_bottom_layout(self, main_layout: QVBoxLayout) -> None:
+        # Create a container widget for the bottom layout
+        bottom_widget = QWidget(self)
+        bottom_layout = QHBoxLayout(bottom_widget)
+        bottom_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Create the status bar (on the left)
+        bottom_layout.addWidget(self.status_bar)
+
+        # Create the toolbar (on the right)
         self.bottombar = ToolBar(self, orientation=Qt.Orientation.Horizontal, style=Qt.ToolButtonStyle.ToolButtonIconOnly, icon_size=(30, 30))
-
         self.bottombar.add_separator()
-
         self.bottombar.add_button("Загрузить данные", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-276.ico"), self.load_document)
         self.bottombar.add_button("Экспорт данных", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-265.ico"), self.export_data)
-        self.bottombar.add_button("Настройки", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-315.ico"), self.settings_window)
+        # SETTINGS: self.bottombar.add_button("Настройки", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-315.ico"), self.settings_window)
 
-        self.addToolBar(Qt.ToolBarArea.BottomToolBarArea, self.bottombar)
+        # Add the toolbar to the bottom layout (right side)
+        bottom_layout.addWidget(self.bottombar)
+
+        # Add the bottom layout to the main layout
+        main_layout.addWidget(bottom_widget)
 
     def settings_window(self) -> None:
         """
@@ -55,8 +73,17 @@ class MainWindow(QMainWindow):
 
     def load_document(self) -> None:
         """
-        Event handler for the "Load Data" button. Displays the "Load Data" dialog.
+        Event handler for the "Load Data" button. Displays the "Load Data" dialog. Copies the selected files (may be multiple) to the "orders/orders_templates" folder.
         """
+        order_files = QFileDialog.getOpenFileNames(self, "Выберите файлы", "", "Excel Files (*.xlsx *.xls)")[0]
+        if len(order_files) == 0:
+            return
+
+        for order_file in order_files:
+            order_template_path = AppConfig.get_order_path("orders/order_templates")
+            shutil.copy(order_file, order_template_path)
+
+        self.data_tab.initialize()
 
     def export_data(self) -> None:
         """
@@ -91,9 +118,9 @@ class MainWindow(QMainWindow):
             options = QFileDialog.Option.DontUseNativeDialog
             file_path_str, _ = QFileDialog.getSaveFileName(self, "Сохранить отчет", str(report_path), "Excel Files (*.xlsx)", options=options)
             file_path = Path(file_path_str)
-            if file_path and file_path.suffix == ".xlsx":
+            if file_path_str != "" and file_path and file_path.suffix == ".xlsx":
                 file_path.parent.mkdir(parents=True, exist_ok=True)
                 workbook.save(file_path)
-            else:
+            elif file_path_str != "":
                 # error dialog
                 QMessageBox.warning(self, "Ошибка", "Неверное расширение файла. Файл не будет сохранен.")

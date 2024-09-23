@@ -11,6 +11,7 @@ class GroupedOrder:
         self,
         software: Software,
         supervisor: Supervisor,
+        employee_names: str,
         company_which_will_use: Company,
         tariff_plan: str | None,
         login_and_password: str | None,
@@ -23,6 +24,7 @@ class GroupedOrder:
         is_new_license: bool,
     ):
         self.supervisor = supervisor
+        self.employee_names = employee_names
         self.software = software
         self.tariff_plan = tariff_plan
         self.login_and_password = login_and_password

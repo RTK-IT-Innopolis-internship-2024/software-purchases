@@ -1,4 +1,5 @@
 from datetime import date
+from pathlib import Path
 
 from src.backend.objects.order_template import OrderTemplate
 from src.ui.models.order_view import OrderView
@@ -21,6 +22,9 @@ class OrderTemplateView:
                 result_orders.append(order)
 
         return result_orders
+
+    def get_file_name(self) -> str:
+        return Path(self.file_path).name
 
     def to_array_in_period(self, start_date: date, end_date: date) -> list:
         return [order.to_array() for order in self.orders_in_period(start_date, end_date)]

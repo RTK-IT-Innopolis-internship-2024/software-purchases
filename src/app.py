@@ -15,4 +15,5 @@ def run() -> int:
 
     window: MainWindow = MainWindow()
     window.show()
+    window.initialize()
     return app.exec()

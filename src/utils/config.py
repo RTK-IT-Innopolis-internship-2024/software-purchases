@@ -18,6 +18,12 @@ class AppConfig:
         Perform any necessary initializations here, e.g.:
         - Loading settings from a file
         """
+        # Create orders/order_templates and orders/main_template if they don't exist
+        order_templates_path = Path(cls.get_order_path("orders/order_templates"))
+        order_templates_path.mkdir(parents=True, exist_ok=True)
+
+        main_order_template_path = Path(cls.get_order_path("orders/main_template"))
+        main_order_template_path.mkdir(parents=True, exist_ok=True)
 
     @classmethod
     def get_order_path(cls, relative_path: str) -> str:

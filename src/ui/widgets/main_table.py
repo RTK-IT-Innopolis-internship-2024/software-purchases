@@ -18,32 +18,29 @@ class CenteredCheckboxDelegate(QStyledItemDelegate):
 
 
 class TableModel(QAbstractTableModel):
-    def __init__(self, data: list[OrderTemplateView], period: tuple[date, date]) -> None:
+    def __init__(self, data: list[OrderTemplateView], period: tuple[date, date], tree_data: dict) -> None:
         super().__init__()
         agg_data = []
         for order_template in data:
-            agg_data.extend(order_template.to_array_in_period(period[0], period[1]))
-        self._data = agg_data
+            order_template_key = order_template.get_file_name()
+            for order in order_template.orders_in_period(period[0], period[1]):
+                order_key = order.get_key()
+                if order_key in tree_data[order_template_key]["orders"] and tree_data[order_template_key]["orders"][order_key]["checked"]:
+                    agg_data.append(order.to_array())
 
-        self.check_states = [Qt.CheckState.Unchecked] * len(self._data)  # Initialize all checkboxes to "unchecked"
+        self._data = agg_data
 
     def rowCount(self, _=None):  # noqa: N802
         return len(self._data)
 
     def columnCount(self, _=None):  # noqa: N802
-        return len(headers) + 2
+        return len(headers) + 1
 
     def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         if index.isValid():
             row, column = index.row(), index.column()
 
             if column == 0:
-                if role == Qt.ItemDataRole.CheckStateRole:
-                    return self.check_states[row]
-                if role == Qt.ItemDataRole.TextAlignmentRole:
-                    return Qt.AlignmentFlag.AlignCenter
-
-            elif column == 1:
                 if role == Qt.ItemDataRole.DisplayRole:
                     return str(row + 1)
                 if role == Qt.ItemDataRole.FontRole:
@@ -52,7 +49,7 @@ class TableModel(QAbstractTableModel):
                     return font
 
             elif role in (Qt.ItemDataRole.DisplayRole, Qt.ItemDataRole.EditRole):
-                return str(self._data[row][column - 2])
+                return str(self._data[row][column - 1])
 
         return QVariant()
 
@@ -66,20 +63,12 @@ class TableModel(QAbstractTableModel):
             return QVariant()
 
         if section == 0:
-            return ""
-        if section == 1:
             return "#"
-        return headers[section - 2].name
+        return headers[section - 1].name
 
     def setData(self, index: QModelIndex, value: Any, role: int = Qt.ItemDataRole.EditRole):  # noqa: N802
         if role == Qt.ItemDataRole.EditRole:
-            self._data[index.row()][index.column() - 2] = value
-            return True
-
-        # Handle checkbox state changes
-        if role == Qt.ItemDataRole.CheckStateRole and index.column() == 0:
-            self.check_states[index.row()] = value
-            self.dataChanged.emit(index, index, [Qt.ItemDataRole.CheckStateRole])
+            self._data[index.row()][index.column() - 1] = value
             return True
 
         return False
@@ -89,15 +78,6 @@ class TableModel(QAbstractTableModel):
             return Qt.ItemFlag.NoItemFlags
 
         if index.column() == 0:
-            return Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsUserCheckable
-
-        if index.column() == 1:
             return Qt.ItemFlag.ItemIsEnabled
 
-        flag = Qt.ItemFlag.ItemIsSelectable
-
-        if index.column() > 1 and headers[index.column() - 2].edit:
-            flag |= Qt.ItemFlag.ItemIsEditable
-            flag |= Qt.ItemFlag.ItemIsEnabled
-
-        return flag
+        return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled

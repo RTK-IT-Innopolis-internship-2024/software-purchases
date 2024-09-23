@@ -1,5 +1,7 @@
 import typing
-from datetime import date
+from datetime import UTC, date, datetime
+
+from src.utils.utils import date_to_year_quarter, quarter_to_date_range
 
 if typing.TYPE_CHECKING:
     from collections.abc import Callable
@@ -14,17 +16,19 @@ class TableBar(QWidget):
         super().__init__()
         layout = QHBoxLayout()
         self.on_period_changed: Callable[[QDate, QDate], None] = lambda *_: None
+        self.on_refresh_document: Callable[[], None] = lambda: None
 
         # Period label
         self.period_label = QLabel("Период:")
         self.period_label.setStyleSheet("font-weight: bold; font-size: 16px; margin-right: 10px;")
         layout.addWidget(self.period_label)
 
+        year, quarter = date_to_year_quarter(datetime.now(tz=UTC).date())
+        start_date, end_date = quarter_to_date_range(year, quarter)
         # DateEdit "From" selector
         self.date_from = QDateEdit()
         self.date_from.setCalendarPopup(True)
-        previous_year = QDate.currentDate().addYears(-1)
-        self.date_from.setDate(previous_year)
+        self.date_from.setDate(start_date)
         self.date_from.setStyleSheet("font-size: 14px; padding: 5px;")
         self.date_from.setFixedHeight(30)
         self.date_from.dateChanged.connect(self.__on_period_changed)
@@ -37,7 +41,7 @@ class TableBar(QWidget):
         # DateEdit "To" selector
         self.date_to = QDateEdit()
         self.date_to.setCalendarPopup(True)
-        self.date_to.setDate(QDate.currentDate())
+        self.date_to.setDate(end_date)
         self.date_to.setStyleSheet("font-size: 14px; padding: 5px;")
         self.date_to.setFixedHeight(30)
         self.date_to.dateChanged.connect(self.__on_period_changed)
@@ -45,12 +49,6 @@ class TableBar(QWidget):
 
         spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         layout.addSpacerItem(spacer)
-
-        # Button with icon "+"
-        self.add_button = QPushButton()
-        self.add_button.setIcon(QIcon.fromTheme("list-add"))
-        layout.addWidget(self.add_button)
-        self.add_button.clicked.connect(self.add_document)
 
         # Button with icon "refresh"
         self.refresh_button = QPushButton()
@@ -60,11 +58,8 @@ class TableBar(QWidget):
 
         self.setLayout(layout)
 
-    def add_document(self) -> None:
-        pass
-
     def refresh_document(self) -> None:
-        pass
+        self.on_refresh_document()
 
     def __on_period_changed(self) -> None:
         self.on_period_changed(

@@ -4,12 +4,12 @@ from src.ui.models.view_model import ViewModel
 
 software_class_headers = [
     TableColumn("Секция класса", edit=False),
-    TableColumn("Точка класса", edit=True),
+    TableColumn("Код класса", edit=True),
     TableColumn("Название класса", edit=False),
-    TableColumn("Индикатор текущего года (первая половина)", edit=True),
-    TableColumn("Индикатор текущего года (вторая половина)", edit=True),
-    TableColumn("Индикатор следующего года (первая половина)", edit=True),
-    TableColumn("Индикатор следующего года (вторая половина)", edit=True),
+    TableColumn("Индикатор текущего года (первая половина)", edit=True, width=150, height_multiplier=2.2),
+    TableColumn("Индикатор текущего года (вторая половина)", edit=True, width=150, height_multiplier=2.2),
+    TableColumn("Индикатор следующего года (первая половина)", edit=True, width=150, height_multiplier=2.2),
+    TableColumn("Индикатор следующего года (вторая половина)", edit=True, width=150, height_multiplier=2.2),
 ]
 
 

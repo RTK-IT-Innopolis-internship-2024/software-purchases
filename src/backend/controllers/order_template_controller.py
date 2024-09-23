@@ -25,7 +25,7 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
         sheet_data = [list(row) for row in sheet.iter_rows(values_only=True)]
         sheets_titles.append(sheet.title)
         sheets_data[sheet.title] = sheet_data
-    check_mandatory_sheets(sheets_titles)
+    check_mandatory_sheets(order_template_file_path, sheets_titles)
     countries = []
     countries_map = {}
     for row in sheets_data["Страны"][1:]:
@@ -35,7 +35,7 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
             countries.append(country)
             countries_map[country.name] = country
     if len(countries) == 0:
-        error_message = "No valid country data found in the 'Страны' sheet."
+        error_message = "Нет валидных данных в справочнике 'Страны'."
         raise ValueError(error_message)
     companies = []
     companies_map = {}
@@ -46,7 +46,7 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
             companies.append(company)
             companies_map[company_name] = company
     if len(companies) == 0:
-        error_message = "No valid company data found in the 'Наименование проекта' sheet."
+        error_message = "Нет валидных данных в справочнике 'Наименование проекта'."
         raise ValueError(error_message)
     supervisors = []
     supervisors_map = {}
@@ -132,7 +132,10 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
         if row[0] is not None:
             software_name = str(row[0])
             software_maker_name = str(row[1]) if row[1] is not None else None
-            software_country = countries_map[row[2]]
+            if row[2] in countries_map:
+                software_country = countries_map[row[2]]
+            else:
+                raise ValueError(f"Неизвестная страна: {row[2]}")
             if row[5] in software_classes_map:
                 software_software_class = software_classes_map[row[5]]
             else:
@@ -166,18 +169,32 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
         if row[3] is not None:
             order_year = int(row[1])
             order_quarter = Quarter(row[2].lower())
-            order_supervisor = supervisors_map[str(row[3])]
+            if order_quarter is None:
+                raise ValueError(f"Неизвестный квартал: {row[2]}")
+            if str(row[3]) in supervisors_map:
+                order_supervisor = supervisors_map[str(row[3])]
+            else:
+                raise ValueError(f"Неизвестный руководитель: {row[3]}")
             order_employee_name = str(row[4])
-            order_software = software_list_map[str(row[5])]
+            if str(row[5]) in software_list_map:
+                order_software = software_list_map[str(row[5])]
+            else:
+                raise ValueError(f"Неизвестное ПО: {row[5]}")
             order_tariff_plan = str(row[7]) if row[7] is not None else None
             order_login_and_password = str(row[8]) if row[8] is not None else None
             order_number_license = int(row[10])
             order_is_new_license = row[11].lower() == "новая"
             order_price_for_one = float(row[12])
             order_licenses_period = row[14].date() if row[14] is not None else None
-            order_license_type = licenses_types_map[str(row[15])]
+            if str(row[15]) in licenses_types_map:
+                order_license_type = licenses_types_map[str(row[15])]
+            else:
+                raise ValueError(f"Неизвестный тип лицензии: {row[15]}")
             order_useful_life = str(row[16]).lower()
-            order_company_which_will_use = companies_map[str(row[18])]
+            if str(row[18]) in companies_map:
+                order_company_which_will_use = companies_map[str(row[18])]
+            else:
+                raise ValueError(f"Неизвестный проект: {row[18]}")
             order_list.append(
                 Order(
                     year=order_year,
@@ -209,7 +226,7 @@ def get_order_template(order_template_file_path: str) -> OrderTemplate:
     )
 
 
-def check_mandatory_sheets(sheets_titles: list[str]) -> None:
+def check_mandatory_sheets(order_template_file_path: str, sheets_titles: list[str]) -> None:
     mandatory_sheet_titles = [
         "Заявки",
         "Классификатор Минкомсвязи",
@@ -223,7 +240,7 @@ def check_mandatory_sheets(sheets_titles: list[str]) -> None:
     ]
     missing_sheets = [title for title in mandatory_sheet_titles if title not in sheets_titles]
     if missing_sheets:
-        error_message = f"The following mandatory sheets are missing: {', '.join(missing_sheets)}"
+        error_message = f"Файл {order_template_file_path} не содержит следующие необходимые листы: {', '.join(missing_sheets)}"
         raise ValueError(error_message)
 
 
@@ -233,11 +250,11 @@ def get_main_order_template() -> OrderTemplate:  # TODO: implement compare and e
     order_templates_paths = [str(file) for file in main_order_template_path.glob("*.xlsx")]
 
     if not order_templates_paths:
-        error_message = "No main order template file found in the specified directory."
+        error_message = "Не удалось найти файл с основным шаблоном."
         raise FileNotFoundError(error_message)
 
     if len(order_templates_paths) != 1:
-        error_message = f"Expected exactly one main order template file, found {len(order_templates_paths)}."
+        error_message = f"Слишком много файлов с основным шаблоном. Найдено {len(order_templates_paths)}."
         raise ValueError(error_message)
 
     order_template_file_path = order_templates_paths[0]
@@ -257,9 +274,13 @@ def get_order_templates_paths(start_date: date, end_date: date) -> list[str]:
     return files
 
 
-def get_all_order_templates() -> list[OrderTemplate]:
+def get_all_order_template_files() -> list[str]:
     order_templates_path = Path(AppConfig.get_order_path("orders/order_templates"))
-    order_templates_paths = [str(file) for file in order_templates_path.glob("*.xlsx")]
+    return [str(file) for file in order_templates_path.glob("*.xlsx") if file.is_file()]  # and not file.name.startswith('~$')]
+
+
+def get_all_order_templates() -> list[OrderTemplate]:
+    order_templates_paths = get_all_order_template_files()
 
     return [get_order_template(order_template_path) for order_template_path in order_templates_paths]
 

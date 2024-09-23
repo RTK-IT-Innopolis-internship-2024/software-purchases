@@ -10,7 +10,7 @@ software_headers = [
     TableColumn("Назначение", edit=True),
     TableColumn("Аналоги", edit=True),
     TableColumn("Ссылка на реестр", edit=True),
-    TableColumn("Присутствие в реестре", edit=False),
+    TableColumn("Присутствие в реестре", edit=False, width=100, height_multiplier=2),
 ]
 
 

@@ -1,6 +1,7 @@
 import typing
 
-from PyQt6.QtWidgets import QHBoxLayout, QHeaderView, QListWidget, QTableView, QWidget
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QHBoxLayout, QHeaderView, QListWidget, QMessageBox, QTableView, QWidget
 
 if typing.TYPE_CHECKING:
     from src.ui.models.column import TableColumn
@@ -18,13 +19,17 @@ from src.ui.widgets.catalog_table import CatalogTableModel
 from ...utils.config import AppConfig
 
 
+class HeaderView(QHeaderView):
+    def __init__(self, parent=None) -> None:
+        super().__init__(Qt.Orientation.Horizontal, parent)
+
+
 class CatalogsTab(QWidget):
     def __init__(self, parent=None) -> None:
         super().__init__(parent)
         layout = QHBoxLayout(self)
 
         self.data: dict[str, tuple[list[ViewModel], list[TableColumn]]] = {}
-        self.load_data()
 
         # Create catalog item list
         self.catalog_list = QListWidget()
@@ -38,10 +43,29 @@ class CatalogsTab(QWidget):
         self.catalog_table = QTableView()
         layout.addWidget(self.catalog_table, stretch=1)
 
+    def initialize(self) -> None:
+        self.load_data()
         self.load_catalogs()
 
     def load_data(self) -> None:
-        template = order_template_controller.get_main_order_template()  # TODO: merge from all templates
+        errors = []
+        try:
+            template = order_template_controller.get_main_order_template()  # TODO: merge from all templates
+        except ValueError as e:
+            errors.append(str(e))
+        except PermissionError:
+            error_msg = "Нет доступа к файлу основного шаблона.\nЕсли файл открыт, закройте его и повторите попытку."
+            errors.append(error_msg)
+        except Exception as e:  # noqa: BLE001
+            error_msg = f"Неизвестная ошибка при обработке файла основного шаблона:\n{e}"
+            errors.append(error_msg)
+
+        if len(errors) > 0:
+            error_msg = errors[0]
+            QMessageBox.critical(self, "Ошибка", f"Не удалось загрузить данные из основного шаблона.\n\n{error_msg}")
+
+        if template is None:
+            self.data = {}
 
         self.data = {
             "Проекты": ([CompanyView.from_company(c) for c in template.companies], CompanyView.get_headers()),
@@ -77,6 +101,7 @@ class CatalogsTab(QWidget):
         """
         Load data into the catalog table based on the selected catalog.
         """
+        self.catalog_table.setModel(None)
         headers = self.data[catalog_name][1]
         data = self.data[catalog_name][0]
 
@@ -89,8 +114,24 @@ class CatalogsTab(QWidget):
         self.catalog_table.setFont(font)
 
         # Resize columns
-        self.catalog_table.resizeColumnsToContents()
         table_header = self.catalog_table.horizontalHeader()
         if table_header is not None:
-            table_header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-        self.catalog_table.setColumnWidth(0, 10)
+            table_header.setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
+            for i in range(1, len(headers) + 1):
+                column = headers[i - 1]
+                if column.width is not None:
+                    self.catalog_table.setColumnWidth(i, column.width)
+                else:
+                    table_header.setSectionResizeMode(i, QHeaderView.ResizeMode.ResizeToContents)
+            table_header.setMaximumSectionSize(300)
+            table_header.setDefaultAlignment(Qt.AlignmentFlag.AlignCenter | Qt.TextFlag.TextWordWrap)
+            max_height_multiplier = 1.0
+            for i in range(1, len(headers) + 1):
+                column = headers[i - 1]
+                if column.height_multiplier is not None:
+                    max_height_multiplier = max(max_height_multiplier, column.height_multiplier)
+            table_header.setMinimumHeight(int(30 * max_height_multiplier))
+            table_header.setStyleSheet(
+                "::section { background-color: #f0f0f0; border-width: 1px; border-style: solid; border-color: #b0b0b0 #b0b0b0 #b0b0b0 #f0f0f0; }"
+                "::section::first { background-color: #f0f0f0; border-width: 1px; border-style: solid; border-color: #b0b0b0 #b0b0b0 #b0b0b0 #b0b0b0; }"
+            )
