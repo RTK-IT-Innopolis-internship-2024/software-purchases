@@ -1,5 +1,8 @@
 ### Инструкция для пользователя:
 
+#### Как выглядит приложение:
+![App main window](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/blob/main/docs/app-main-window.png)
+
 #### Релиз приложения состоит из архива со следующим содержимым:
 
 ├── 📁 Apps-Purchases-<your_platform_name>-latest/  
