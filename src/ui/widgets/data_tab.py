@@ -114,7 +114,7 @@ class DataTab(QWidget):
                 errors.append((template_file, error_msg))
 
         if len(errors) > 0:
-            error_msg = "<br><br>".join([f"<b>{file}</b>:<br><span style='color:red;'>{error}</span>" for file, error in errors])
+            error_msg = "<br><br>".join([f"<b>{file}</b>:<br><span style='color:darkred;'>{error}</span>" for file, error in errors])
             QMessageBox.warning(self, "Ошибка", f"Не удалось загрузить данные.<br><br>{error_msg}")
         self.data = [OrderTemplateView.from_order_template(template) for template in templates]
 

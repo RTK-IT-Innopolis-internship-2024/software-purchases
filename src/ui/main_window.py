@@ -81,7 +81,14 @@ class MainWindow(QMainWindow):
 
         for order_file in order_files:
             order_template_path = AppConfig.get_order_path("orders/order_templates")
-            shutil.copy(order_file, order_template_path)
+            try:
+                shutil.copy(order_file, order_template_path)
+            except shutil.SameFileError:
+                QMessageBox.warning(self, "Ошибка", f"Файл {order_file} уже существует.")
+            except PermissionError:
+                QMessageBox.warning(self, "Ошибка", "Нет доступа к файлу.<br>Если файл открыт, закройте его и повторите попытку.")
+            except Exception as e:  # noqa: BLE001
+                QMessageBox.warning(self, "Ошибка", f"Не удалось скопировать файл.<br><span style='color:darkred;'>{e}</span>")
 
         self.data_tab.initialize()
 
