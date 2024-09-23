@@ -276,7 +276,7 @@ def get_order_templates_paths(start_date: date, end_date: date) -> list[str]:
 
 def get_all_order_template_files() -> list[str]:
     order_templates_path = Path(AppConfig.get_order_path("orders/order_templates"))
-    return [str(file) for file in order_templates_path.glob("*.xlsx") if file.is_file()]  # and not file.name.startswith('~$')]
+    return [str(file) for file in order_templates_path.glob("*.xlsx") if file.is_file() and not file.name.startswith("~$")]
 
 
 def get_all_order_templates() -> list[OrderTemplate]:
