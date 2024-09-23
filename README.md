@@ -1,4 +1,4 @@
-![example workflow](https://github.com/abobafett-dev/software-purchases/actions/workflows/multiplatform-build.yml/badge.svg)
+![example workflow](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/multiplatform-build.yml/badge.svg?branch=main)
 
 ### Инструкция для пользователя:
 
