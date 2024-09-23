@@ -121,9 +121,16 @@ class DataTab(QWidget):
     def get_order_views_filtered(self) -> list[OrderView]:
         if self.data is None:
             return []
+
+        tree_data = self.treeview.current_state
         orders: list[OrderView] = []
-        for template in self.data:
-            orders.extend(template.orders_in_period(self.period[0], self.period[1]))
+        for order_template in self.data:
+            order_template_key = order_template.get_file_name()
+            for order in order_template.orders_in_period(self.period[0], self.period[1]):
+                order_key = order.get_key()
+                if order_key in tree_data[order_template_key]["orders"] and tree_data[order_template_key]["orders"][order_key]["checked"]:
+                    orders.append(order)
+
         return orders
 
     def on_refresh_clicked(self) -> None:
