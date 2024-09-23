@@ -1,4 +1,6 @@
-![example workflow](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/multiplatform-build.yml/badge.svg?branch=main)
+![windows](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/windows-build.yml/badge.svg?branch=main)
+![ubuntu](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/ubuntu-build.yml/badge.svg?branch=main)
+![macos](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/macos-build.yml/badge.svg?branch=main)
 
 ### Инструкция для пользователя:
 
