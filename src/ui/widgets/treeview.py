@@ -88,7 +88,7 @@ class TreeView(QTreeWidget):
                 self.persistant_state[file_name] = {"checked": Qt.CheckState.Checked, "expanded": False, "item": top_item, "orders": {}}
 
             self.current_state[file_name] = {"checked": top_item.checkState(0) == Qt.CheckState.Checked, "orders": {}}
-            font = QFont("", weight=QFont.Weight.Bold)
+            font = QFont("Arial", weight=QFont.Weight.Bold)
             font.setPointSize(AppConfig.FONT_SIZE)
             top_item.setFont(0, font)
             self.update_font(top_item)
