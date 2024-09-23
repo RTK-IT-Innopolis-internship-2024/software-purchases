@@ -1,3 +1,5 @@
+![example workflow](https://github.com/github/docs/actions/workflows/multiplatform-build.yml/badge.svg)
+
 ### Инструкция для пользователя:
 
 #### Как выглядит приложение:
