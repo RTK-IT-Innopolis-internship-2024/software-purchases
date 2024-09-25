@@ -49,17 +49,17 @@ jobs:
           && sudo apt update \
           && sudo apt install gh -y
       - name: Download Windows App
-        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-windows-latest
+        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-Windows
           --dir ./dist/Apps-Purchases-windows-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Download Linux App
-        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-ubuntu-latest
+        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-Ubuntu
           --dir ./dist/Apps-Purchases-ubuntu-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Download macOS App
-        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-macos-latest
+        run: gh run download --repo ${{ github.repository }} --name Apps-Purchases-macOS
           --dir ./dist/Apps-Purchases-macos-latest
         env:
           GITHUB_TOKEN: ${{ github.token }}
