@@ -1,5 +1,5 @@
-from src.backend.objects.country import Country
-from src.backend.objects.software_class import SoftwareClass
+from src.backend.models.country import Country
+from src.backend.models.software_class import SoftwareClass
 
 
 class Software:

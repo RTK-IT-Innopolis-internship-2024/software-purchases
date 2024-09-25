@@ -1,10 +1,10 @@
 from datetime import date
 
-from src.backend.objects.company import Company
-from src.backend.objects.license_type import LicenseType
-from src.backend.objects.quarter import Quarter
-from src.backend.objects.software import Software
-from src.backend.objects.supervisor import Supervisor
+from src.backend.models.company import Company
+from src.backend.models.license_type import LicenseType
+from src.backend.models.quarter import Quarter
+from src.backend.models.software import Software
+from src.backend.models.supervisor import Supervisor
 
 
 def has_analogs(software_analogs: str | None) -> bool:
@@ -29,6 +29,7 @@ class Order:
         licenses_period: date | None,
         license_type: LicenseType,
         useful_life: str,
+        *,
         is_new_license: bool,
     ):
         self.year = year

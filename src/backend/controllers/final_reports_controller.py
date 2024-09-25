@@ -6,8 +6,8 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
-from src.backend.objects.grouped_order import GroupedOrder
-from src.backend.objects.order import Order, has_analogs
+from src.backend.models.grouped_order import GroupedOrder
+from src.backend.models.order import Order, has_analogs
 
 T = TypeVar("T")
 
@@ -131,7 +131,7 @@ def create_orders_report_with_sort_by_params(order_list: list[Order] | None, sor
         "Продление/новая",
         "Цена за единицу, руб, без НДС",
         "Стоимость, руб, без НДС (за все лицензии)",
-        """Окончание срока действия текущих лицензий 
+        """Окончание срока действия текущих лицензий
 (если продление)""",
         """Лицензия/
 Подписка/
@@ -144,7 +144,7 @@ def create_orders_report_with_sort_by_params(order_list: list[Order] | None, sor
         "Тип ПО по классификатору Минкомсвязи",
         """Наличие ПО в реестре Российского ПО*
 (да/нет)""",
-        """Наличие аналогов в Реестре Российского ПО 
+        """Наличие аналогов в Реестре Российского ПО
 (да/нет)""",
         "Проект в котором будет использоваться ПО",
         "Ссылка на ПО (лицензии) на сайте производителя",
@@ -178,7 +178,7 @@ def create_orders_report_with_sort_by_params(order_list: list[Order] | None, sor
         "Тип ПО по классификатору Минкомсвязи",
         """Наличие ПО в реестре Российского ПО*
 (да/нет)""",
-        """Наличие аналогов в Реестре Российского ПО 
+        """Наличие аналогов в Реестре Российского ПО
 (да/нет)""",
         "Проект в котором будет использоваться ПО",
         "Ссылка на ПО (лицензии) на сайте производителя",

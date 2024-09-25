@@ -1,4 +1,4 @@
-from src.backend.objects.order import Order, has_analogs
+from src.backend.models.order import Order, has_analogs
 from src.ui.models.column import TableColumn
 from src.ui.models.view_model import ViewModel
 

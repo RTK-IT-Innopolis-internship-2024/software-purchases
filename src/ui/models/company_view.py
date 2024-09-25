@@ -1,4 +1,4 @@
-from src.backend.objects.company import Company
+from src.backend.models.company import Company
 from src.ui.models.column import TableColumn
 from src.ui.models.view_model import ViewModel
 

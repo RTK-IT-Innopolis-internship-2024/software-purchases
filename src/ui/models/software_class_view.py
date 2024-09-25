@@ -1,4 +1,4 @@
-from src.backend.objects.software_class import SoftwareClass
+from src.backend.models.software_class import SoftwareClass
 from src.ui.models.column import TableColumn
 from src.ui.models.view_model import ViewModel
 

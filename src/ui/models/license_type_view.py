@@ -1,4 +1,4 @@
-from src.backend.objects.license_type import LicenseType
+from src.backend.models.license_type import LicenseType
 from src.ui.models.column import TableColumn
 from src.ui.models.view_model import ViewModel
 

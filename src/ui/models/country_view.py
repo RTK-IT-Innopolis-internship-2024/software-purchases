@@ -1,4 +1,4 @@
-from src.backend.objects.country import Country
+from src.backend.models.country import Country
 from src.ui.models.column import TableColumn
 from src.ui.models.view_model import ViewModel
 

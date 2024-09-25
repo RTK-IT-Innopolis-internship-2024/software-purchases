@@ -3,7 +3,7 @@ from uuid import UUID
 from eventsourcing.application import Application
 
 from src.backend.aggregates.order_template_aggregate import OrderTemplateAggregate
-from src.backend.objects.order_template import OrderTemplate
+from src.backend.models.order_template import OrderTemplate
 
 
 class OrderTemplateHandler(Application):

@@ -1,4 +1,4 @@
-from src.backend.objects.supervisor import Supervisor
+from src.backend.models.supervisor import Supervisor
 from src.ui.models.column import TableColumn
 from src.ui.models.view_model import ViewModel
 

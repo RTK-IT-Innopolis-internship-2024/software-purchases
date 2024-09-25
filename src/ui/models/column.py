@@ -1,5 +1,5 @@
 class TableColumn:
-    def __init__(self, name: str, edit: bool = True, width: int | None = None, height_multiplier: float = 1):
+    def __init__(self, name: str, width: int | None = None, height_multiplier: float = 1, *, edit: bool = True):
         self.name = name
         self.edit = edit
         self.width = width

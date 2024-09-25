@@ -1,10 +1,10 @@
-from src.backend.objects.company import Company
-from src.backend.objects.country import Country
-from src.backend.objects.license_type import LicenseType
-from src.backend.objects.order import Order
-from src.backend.objects.software import Software
-from src.backend.objects.software_class import SoftwareClass
-from src.backend.objects.supervisor import Supervisor
+from src.backend.models.company import Company
+from src.backend.models.country import Country
+from src.backend.models.license_type import LicenseType
+from src.backend.models.order import Order
+from src.backend.models.software import Software
+from src.backend.models.software_class import SoftwareClass
+from src.backend.models.supervisor import Supervisor
 
 
 class OrderTemplate:

@@ -1,4 +1,4 @@
-from src.backend.objects.software_class_section import SoftwareClassSection
+from src.backend.models.software_class_section import SoftwareClassSection
 
 
 class SoftwareClass:

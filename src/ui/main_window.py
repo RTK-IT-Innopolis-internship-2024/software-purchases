@@ -58,7 +58,8 @@ class MainWindow(QMainWindow):
         self.bottombar.add_separator()
         self.bottombar.add_button("Загрузить данные", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-276.ico"), self.load_document)
         self.bottombar.add_button("Экспорт данных", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-265.ico"), self.export_data)
-        # SETTINGS: self.bottombar.add_button("Настройки", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-315.ico"), self.settings_window)
+        # SETTINGS: self.bottombar.add_button("Настройки", AppConfig.get_resource_path("resources/assets/icons/windows/shell32-315.ico"),
+        # self.settings_window)
 
         # Add the toolbar to the bottom layout (right side)
         bottom_layout.addWidget(self.bottombar)
@@ -73,7 +74,8 @@ class MainWindow(QMainWindow):
 
     def load_document(self) -> None:
         """
-        Event handler for the "Load Data" button. Displays the "Load Data" dialog. Copies the selected files (may be multiple) to the "orders/orders_templates" folder.
+        Event handler for the "Load Data" button. Displays the "Load Data" dialog. Copies the selected files (may be multiple)
+        to the "orders/orders_templates" folder.
         """
         order_files = QFileDialog.getOpenFileNames(self, "Выберите файлы", "", "Excel Files (*.xlsx *.xls)")[0]
         if len(order_files) == 0:

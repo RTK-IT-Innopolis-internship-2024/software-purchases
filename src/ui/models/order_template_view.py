@@ -1,7 +1,7 @@
 from datetime import date
 from pathlib import Path
 
-from src.backend.objects.order_template import OrderTemplate
+from src.backend.models.order_template import OrderTemplate
 from src.ui.models.order_view import OrderView
 from src.utils import utils
 

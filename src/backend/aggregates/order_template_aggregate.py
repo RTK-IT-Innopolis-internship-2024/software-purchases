@@ -1,6 +1,6 @@
 from eventsourcing.domain import Aggregate, event
 
-from src.backend.objects.order_template import OrderTemplate
+from src.backend.models.order_template import OrderTemplate
 
 
 class OrderTemplateAggregate(Aggregate):
