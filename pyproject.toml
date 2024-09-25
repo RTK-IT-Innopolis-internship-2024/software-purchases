@@ -5,25 +5,15 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-
     "datetime>=5.5",
-
     "eventsourcing>=9.3.2",
-
     "openpyxl>=3.1.5",
-
     "pandas>=2.2.2",
-
     "pybind11>=2.13.5",
-
     "pyinstaller>=6.10.0",
-
     "pyqt6>=6.7.1",
-
     "setuptools>=74.0.0",
-
     "wheel>=0.44.0",
-
     "xlsxwriter>=3.2.0",
 ]
 
@@ -46,13 +36,13 @@ extend-ignore = [
     "ANN", # flake8-annotations
     "COM", # flake8-commas
     "C90", # mccabe complexity
-    "DJ",  # django
+    "DJ", # django
     "EXE", # flake8-executable
     "T10", # debugger
     "TID", # flake8-tidy-imports
 
     #### specific rules
-    "D100",   # ignore missing docs
+    "D100", # ignore missing docs
     "D101",
     "D102",
     "D103",
