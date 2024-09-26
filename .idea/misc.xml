@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="Black">
+    <option name="sdkName" value="Python UV (2) (software-purchases)" />
+  </component>
   <component name="ProjectRootManager" version="2" project-jdk-name="Python UV (2) (software-purchases)" project-jdk-type="Python SDK" />
 </project>
