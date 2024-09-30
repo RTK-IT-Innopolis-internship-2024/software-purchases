@@ -2,7 +2,7 @@
 ![Ubuntu Build](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/ubuntu-build.yml/badge.svg?branch=main)
 ![macOS Build](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/macos-build.yml/badge.svg?branch=main)
 ![GitHub Releases](https://img.shields.io/github/v/release/RTK-IT-Innopolis-internship-2024/software-purchases)
-![Release Date](https://img.shields.io/github/release-date/RTK-IT-Innopolis-internship-2024/software-purchases)
+![Release Date](https://img.shields.io/github/release-date/RTK-IT-Innopolis-internship-2024/software-purchases?style=flat&label=Release%20Date&format=%25d.%25m.%25Y)
 ![GitHub Last Commit](https://img.shields.io/github/last-commit/RTK-IT-Innopolis-internship-2024/software-purchases)
 
 
