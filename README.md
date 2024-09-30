@@ -1,6 +1,10 @@
-![windows](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/windows-build.yml/badge.svg?branch=main)
-![ubuntu](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/ubuntu-build.yml/badge.svg?branch=main)
-![macos](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/macos-build.yml/badge.svg?branch=main)
+![Windows Build](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/windows-build.yml/badge.svg?branch=main)
+![Ubuntu Build](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/ubuntu-build.yml/badge.svg?branch=main)
+![macOS Build](https://github.com/RTK-IT-Innopolis-internship-2024/software-purchases/actions/workflows/macos-build.yml/badge.svg?branch=main)
+![GitHub Releases](https://img.shields.io/github/v/release/RTK-IT-Innopolis-internship-2024/software-purchases)
+![Release Date](https://img.shields.io/github/release-date/RTK-IT-Innopolis-internship-2024/software-purchases)
+![GitHub Last Commit](https://img.shields.io/github/last-commit/RTK-IT-Innopolis-internship-2024/software-purchases)
+
 
 # 1. Инструкция для пользователя:
 
