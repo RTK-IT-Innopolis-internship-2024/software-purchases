@@ -1,7 +1,10 @@
 ---
 name: macOS Build
 on:
-  workflow_call:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 jobs:
   build-macos:
     runs-on: macos-latest
